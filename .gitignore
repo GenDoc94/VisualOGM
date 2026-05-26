@@ -1,0 +1,9 @@
+examples_files/
+files/
+bases/
+graphs/
+workflow_data.rds
+*.rds
+*.RData
+*.Rhistory
+.Rproj.user/

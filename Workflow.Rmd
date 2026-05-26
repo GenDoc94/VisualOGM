@@ -1,0 +1,279 @@
+---
+title: "WorkFlow"
+author: "GenDoc94"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(writexl)
+library(gridExtra)
+library(patchwork)
+library(ggplot2)
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(readxl)
+  library(jsonlite)
+})
+start_time <- Sys.time()
+```
+
+```{r starting_time, echo=FALSE, message=TRUE}
+cat("El análisis comenzó a las:", as.character(start_time))
+```
+
+## OGM Read Workflow
+
+Firstly, we have to pull all archives from our server (Dropbox) to our repository (OGMRead).
+
+We should copy:
+
+-   json_files
+
+-   variants_files
+
+-   aneuploidy_files
+
+-   clinical_files
+
+```{r copying_files, echo=FALSE, message=TRUE}
+source("scripts/copy_files.R")
+```
+
+If there is no error here, all is OK (no replicate Ids) we can proceed to the next step.
+
+## Making the bases
+
+Now, we are going to run the code to create the complete base.
+
+```{r reading_files, echo=FALSE, message=TRUE, warning=FALSE}
+source("scripts/read_files.R")
+```
+
+After this we have some bases:
+
+-   `complete_base` -\> All the information about the patient and clinics
+
+-   `cb_filter` -\> All the important variants of patients without LB/B variants and with some standard parameters: VAF \> 0.05 and molecule count \> 10.
+
+And some subbases:
+
+-   `demograph`
+
+-   `metadata`
+
+-   `lecturas`
+
+-   `quality`
+
+-   `variants`
+
+-   `aneuploidies`
+
+## Basics of our data
+
+```{r basics_data, echo=FALSE}
+cat("Total muestras procesadas: ", total_samples, "\n")
+cat("Total muestras analizadas: ", nrow(cb_filter), "\n")
+cat("Total muestras pendientes: ", pending_samples, "\n")
+cat("Total muestras fallidas: ", error_samples, "\n")
+cat("Porcentaje muestras fallidas: ", round(error_samples/total_samples, 2)*100, "%")
+```
+
+```{r plot_evolucion_detallada, echo=FALSE, message=FALSE, warning=FALSE}
+library(lubridate)
+
+# 1. Preparar los datos con los 3 estados originales
+evolucion_detallada <- metadata %>%
+  mutate(
+    # Agrupamos por mes (o "week" para más detalle)
+    Mes = floor_date(as.Date(Fecha), "month"),
+    # Convertimos el número a texto descriptivo para la leyenda
+    Estado_Texto = case_when(
+      Estado_Muestra == 3 ~ "Finalizado",
+      Estado_Muestra == 2 ~ "Pendiente",
+      Estado_Muestra == 1 ~ "Perdida",
+      TRUE ~ "Desconocido"
+    )
+  ) %>%
+  group_by(Mes, Estado_Texto) %>%
+  summarise(Total = n(), .groups = "drop")
+
+# 2. Gráfica con tres líneas
+ggplot(evolucion_detallada, aes(x = Mes, y = Total, color = Estado_Texto, group = Estado_Texto)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 2.5) +
+  # Colores específicos: Verde (OK), Naranja (Espera), Rojo (Error)
+  scale_color_manual(values = c(
+    "Finalizado" = "#2E7D32", 
+    "Pendiente"  = "#F9A825", 
+    "Perdida"    = "#C62828"
+  )) +
+  labs(
+    title = "Evolución Temporal del Estado de las Muestras",
+    subtitle = "Seguimiento por mes: Finalizadas, Pendientes y Perdidas",
+    x = "Fecha",
+    y = "Número de Muestras",
+    color = "Estado"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+```
+
+```{r viscosity}
+visco_quanti <- metadata |> left_join(lecturas, by = c("Id" = "NumBN_L")) |>
+        select(Id, Visco_grado, Media_Lectura)
+
+p1 <- metadata |> 
+  filter(!is.na(Visco_grado)) |> 
+  mutate(Visco_grado = as.factor(Visco_grado)) |> 
+  ggplot(aes(x = Visco_grado, fill = Visco_grado)) +
+  geom_bar() +
+  # Añadir los números encima
+  stat_count(geom = "text", 
+             aes(label = after_stat(count)),
+             vjust = -0.5,      # Empuja el texto hacia arriba (valor negativo)
+             size = 4,          # Tamaño de la fuente
+             fontface = "bold") +
+  theme_minimal() +
+  labs(
+    title = "Distribución del grado de viscosidad",
+    x = "Grado de Viscosidad",
+    y = "Número de muestras",
+    fill = "Grado"
+  ) +
+  theme(legend.position = "none") +
+  # Expandir el eje Y un poco para que el número no se corte arriba
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1)))
+
+
+p2 <- visco_quanti |> 
+  filter(!is.na(Visco_grado), !is.na(Media_Lectura)) |> 
+  mutate(Visco_grado = as.factor(Visco_grado)) |> 
+  ggplot(aes(x = Visco_grado, y = Media_Lectura, fill = Visco_grado)) +
+# Gráfico de Violín
+  geom_violin(alpha = 0.6, trim = TRUE) + 
+  geom_hline(yintercept = c(30, 120), color = "gold", linetype = "dashed", linewidth = 0.8) +
+  geom_hline(yintercept = c(45, 90), color = "forestgreen", linetype = "solid", linewidth = 0.8) +
+  theme_minimal() +
+  labs(
+    title = "[DNA] por grado de viscosidad",
+    x = "Grado de Viscosidad",
+    y = "[DNA] (ng/uL)",
+    fill = "Grado"
+  ) +
+  theme(legend.position = "none")
+
+p1 + p2
+```
+
+## Quality of Samples
+
+Here...
+
+```{r quality, echo=FALSE}
+#Creating base
+#Merge metadata+quality
+qualmet <- left_join(quality, metadata, by = c("samplename" = "Id"))
+qualmet_clean <- qualmet |> select(quantity, mol_n_50, coverage, map_rate, fp_rate, fn_rate, Dx)
+```
+
+### Total Sample
+```{r total_quality, echo=FALSE}
+cat("n=", nrow(qualmet_clean),"\n")
+qualmet_clean |> select(-Dx) |> summary()
+```
+
+### MM
+```{r MM_quality, echo=FALSE}
+qualmet_clean_MM <- qualmet_clean |> filter(Dx == "MM") 
+cat("n =", nrow(qualmet_clean_MM), "\n")
+qualmet_clean_MM |> select(-Dx) |> summary()
+```
+
+### LMA
+```{r LMA_quality, echo=FALSE}
+qualmet_clean_LMA <- qualmet_clean |> filter(Dx == "LMA") 
+cat("n =", nrow(qualmet_clean_LMA), "\n")
+qualmet_clean_LMA |> select(-Dx) |> summary()
+```
+
+### LLC
+```{r LLC_quality, echo=FALSE}
+qualmet_clean_LLC <- qualmet_clean |> filter(Dx == "LLC") 
+cat("n =", nrow(qualmet_clean_LLC), "\n")
+qualmet_clean_LLC |> select(-Dx) |> summary()
+```
+
+
+## Generating list to export
+
+```{r generating_export_list}
+export_base <- complete_base |> select(Id, NHC, FechaNac, FechaPet, FechaDx, Petic, Dx)
+
+#MM
+export_base_MM <- export_base |> filter(Dx == "MM")
+write_xlsx(export_base_MM, path = "bases/export_base_MM.xlsx")
+saveRDS(export_base_MM, "export_base_MM.rds")
+#envir = new.env() just to make sure start_time does not desapear
+rmarkdown::render("export_base_MM.Rmd", output_dir = "bases", envir = new.env())
+file.remove("export_base_MM.rds")
+
+#LMA
+export_base_LMA <- export_base |> filter(Dx == "LMA")
+write_xlsx(export_base_LMA, path = "bases/export_base_LMA.xlsx")
+saveRDS(export_base_LMA, "export_base_LMA.rds")
+rmarkdown::render("export_base_LMA.Rmd", output_dir = "bases", envir = new.env())
+file.remove("export_base_LMA.rds")
+
+#LLA
+export_base_LLA <- export_base |> filter(Dx == "LAL-B")
+write_xlsx(export_base_LLA, path = "bases/export_base_LLA.xlsx")
+saveRDS(export_base_LLA, "export_base_LLA.rds")
+rmarkdown::render("export_base_LLA.Rmd", output_dir = "bases", envir = new.env())
+file.remove("export_base_LLA.rds")
+```
+
+## Generating Graphs
+
+Finally, we can generate our circles plot:
+
+```{r generating_circleplots}
+source("scripts/circleplot.R") #This source generate the function circleplot(id_pac, dbase)
+source("scripts/pdfgraphs.R") #This source generate the function make_pdf_graphs(filter_dx, filename)
+
+# Generate PDF for MM
+#make_pdf_graphs(filter_dx = "MM", filename = "graphs/MM_graphs.pdf")
+
+# Generate PDF for LMA
+#make_pdf_graphs(filter_dx = "LMA", filename = "graphs/LMA_graphs.pdf")
+
+# Generate PDF for LLC
+#make_pdf_graphs(filter_dx = "LLC", filename = "graphs/LLC_graphs.pdf")
+```
+
+## Saving data
+
+```{r saving_data, echo=FALSE, message=TRUE}
+objects_ogm <- list(
+  complete_base = complete_base,
+  cb_filter = cb_filter
+)
+
+saveRDS(objects_ogm, "workflow_data.rds")
+message("Saved: ", paste(names(objects_ogm), collapse = ", "))
+```
+
+
+
+```{r ending_time, cache = FALSE, echo=FALSE, message=TRUE}
+end_time <- Sys.time()
+cat("El análisis terminó a las:", as.character(end_time),"\n")
+total_time <- (end_time - start_time)
+cat("Ha tardado:", round(as.numeric(total_time),2), units(total_time))
+```
