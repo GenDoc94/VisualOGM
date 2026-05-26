@@ -23,6 +23,19 @@ extract_sample_id <- function(filename) {
   as.integer(sample_id)
 }
 
+check_file_name <- function(filename, expected_text, file_label) {
+  if (!str_detect(basename(filename), fixed(expected_text, ignore_case = TRUE))) {
+    stop(
+      "Comprueba que has subido un archivo \"",
+      expected_text,
+      "\".",
+      call. = FALSE
+    )
+  }
+
+  invisible(filename)
+}
+
 check_required_columns <- function(data, required_columns, file_label) {
   missing_columns <- setdiff(required_columns, names(data))
 
@@ -183,6 +196,17 @@ prepare_circleplot_case <- function(
   min_molecule_count = 10,
   min_vaf = 0.05
 ) {
+  check_file_name(
+    classified_name,
+    expected_text = "Classified_Variants",
+    file_label = "Classified_Variants"
+  )
+  check_file_name(
+    aneuploidy_name,
+    expected_text = "Aneuploidy",
+    file_label = "Aneuploidy"
+  )
+
   classified_id <- extract_sample_id(classified_name)
   aneuploidy_id <- extract_sample_id(aneuploidy_name)
 

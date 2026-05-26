@@ -9,8 +9,8 @@ Aplicacion Shiny ligera para generar un circle plot a partir de dos archivos del
 La app valida que ambos archivos empiecen por el mismo numero de muestra, lee los datos con la misma logica del workflow y permite ajustar de forma reactiva:
 
 - clasificaciones de variantes estructurales a incluir: `Pathogenic`, `Likely pathogenic` y `Uncertain significance`
-- `moleculeCount` minimo, por defecto `>= 10`
-- `VAF` minima, por defecto `>= 0.05`
+- moleculas minimas, por defecto `>= 10`
+- `VAF` minima en porcentaje, por defecto `>= 5%` (`0.05` en los archivos)
 - aneuploidias del archivo `Aneuploidy`, sin filtro de clasificacion
 
 Uso local

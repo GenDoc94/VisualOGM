@@ -60,7 +60,7 @@ ui <- fluidPage(
       tags$hr(),
       checkboxGroupInput(
         "classification_filter",
-        "Clasificaciones a incluir",
+        "Variantes a incluir",
         choices = c(
           "Pathogenic",
           "Likely pathogenic",
@@ -72,27 +72,24 @@ ui <- fluidPage(
           "Uncertain significance"
         )
       ),
-      numericInput(
+      sliderInput(
         "min_molecule_count",
-        "moleculeCount minimo",
+        "Moleculas minimas",
         value = 10,
-        min = 0,
+        min = 1,
+        max = 100,
         step = 1
       ),
-      numericInput(
+      sliderInput(
         "min_vaf",
-        "VAF minima",
-        value = 0.05,
+        "VAF minima (%)",
+        value = 5,
         min = 0,
-        max = 1,
-        step = 0.01
+        max = 100,
+        step = 1,
+        post = "%"
       ),
       tags$hr(),
-      p(
-        class = "app-note",
-        "Los filtros anteriores se aplican solo a las variantes estructurales clasificadas. ",
-        "Las aneuploidias se incorporan desde su propio archivo sin filtro de clasificacion."
-      ),
       tags$h4("Resumen"),
       tableOutput("summary"),
       tags$hr(),
@@ -118,7 +115,7 @@ server <- function(input, output, session) {
         aneuploidy_name = input$aneuploidy_file$name,
         classifications = input$classification_filter,
         min_molecule_count = input$min_molecule_count,
-        min_vaf = input$min_vaf
+        min_vaf = input$min_vaf / 100
       ),
       error = function(error) {
         list(error = conditionMessage(error))
@@ -142,7 +139,7 @@ server <- function(input, output, session) {
       return(
         div(
           class = "status-box status-error",
-          strong("No se puede generar el grafico: "),
+          strong("No se puede generar el gráfico: "),
           case$error
         )
       )
@@ -152,7 +149,7 @@ server <- function(input, output, session) {
       class = "status-box status-ok",
       strong("Muestra validada: "),
       case$id,
-      ". El grafico se ha generado con los filtros del workflow."
+      ". El gráfico se ha generado con los filtros del workflow."
     )
   })
 
