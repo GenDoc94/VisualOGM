@@ -6,12 +6,12 @@ Aplicacion Shiny ligera para generar un circle plot a partir de dos archivos del
 - `*_Classified_Variants*.txt`
 - `*_Aneuploidy.txt`
 
-La app valida que ambos archivos empiecen por el mismo numero de muestra, lee los datos con la misma logica del workflow y conserva solo:
+La app valida que ambos archivos empiecen por el mismo numero de muestra, lee los datos con la misma logica del workflow y permite ajustar de forma reactiva:
 
-- variantes `Pathogenic`, `Likely pathogenic` y `Uncertain significance`
-- variantes con `moleculeCount >= 10`, cuando el campo esta informado
-- variantes con `VAF >= 0.05`, cuando el campo esta informado
-- aneuploidias `gain` y `loss`
+- clasificaciones de variantes estructurales a incluir: `Pathogenic`, `Likely pathogenic` y `Uncertain significance`
+- `moleculeCount` minimo, por defecto `>= 10`
+- `VAF` minima, por defecto `>= 0.05`
+- aneuploidias del archivo `Aneuploidy`, sin filtro de clasificacion
 
 Uso local
 ---------
@@ -28,7 +28,7 @@ Ejecuta la aplicacion desde la raiz del proyecto:
 shiny::runApp()
 ```
 
-Despues sube el archivo de variantes clasificadas y el archivo de aneuploidias. El grafico se actualiza automaticamente y se puede descargar en PDF o PNG.
+Despues sube el archivo de variantes clasificadas y el archivo de aneuploidias. El grafico se actualiza automaticamente al cambiar los archivos o los filtros y se puede descargar en PDF o PNG.
 
 Archivos principales
 --------------------

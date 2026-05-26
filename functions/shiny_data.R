@@ -152,12 +152,25 @@ filter_circleplot_variants <- function(variants) {
     )
 }
 
-filter_classified_variants <- function(variants) {
+filter_classified_variants <- function(
+  variants,
+  classifications = relevant_classifications,
+  min_molecule_count = 10,
+  min_vaf = 0.05
+) {
+  if (is.null(min_molecule_count) || is.na(min_molecule_count)) {
+    min_molecule_count <- 10
+  }
+
+  if (is.null(min_vaf) || is.na(min_vaf)) {
+    min_vaf <- 0.05
+  }
+
   variants |>
     filter(
-      Classification %in% relevant_classifications,
-      moleculeCount >= 10 | is.na(moleculeCount),
-      VAF >= 0.05 | is.na(VAF)
+      Classification %in% classifications,
+      moleculeCount >= min_molecule_count | is.na(moleculeCount),
+      VAF >= min_vaf | is.na(VAF)
     )
 }
 
@@ -165,7 +178,10 @@ prepare_circleplot_case <- function(
   classified_path,
   classified_name,
   aneuploidy_path,
-  aneuploidy_name
+  aneuploidy_name,
+  classifications = relevant_classifications,
+  min_molecule_count = 10,
+  min_vaf = 0.05
 ) {
   classified_id <- extract_sample_id(classified_name)
   aneuploidy_id <- extract_sample_id(aneuploidy_name)
@@ -190,7 +206,12 @@ prepare_circleplot_case <- function(
 
   classified_variants <- read_classified_variants(classified_path, classified_name)
   aneuploidies <- read_aneuploidy(aneuploidy_path, aneuploidy_name)
-  filtered_classified_variants <- filter_classified_variants(classified_variants)
+  filtered_classified_variants <- filter_classified_variants(
+    classified_variants,
+    classifications = classifications,
+    min_molecule_count = min_molecule_count,
+    min_vaf = min_vaf
+  )
 
   combined_variants <- bind_rows(classified_variants, aneuploidies) |>
     arrange(Id)

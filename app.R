@@ -58,10 +58,39 @@ ui <- fluidPage(
         accept = c(".txt", "text/plain")
       ),
       tags$hr(),
+      checkboxGroupInput(
+        "classification_filter",
+        "Clasificaciones a incluir",
+        choices = c(
+          "Pathogenic",
+          "Likely pathogenic",
+          "Uncertain significance"
+        ),
+        selected = c(
+          "Pathogenic",
+          "Likely pathogenic",
+          "Uncertain significance"
+        )
+      ),
+      numericInput(
+        "min_molecule_count",
+        "moleculeCount minimo",
+        value = 10,
+        min = 0,
+        step = 1
+      ),
+      numericInput(
+        "min_vaf",
+        "VAF minima",
+        value = 0.05,
+        min = 0,
+        max = 1,
+        step = 0.01
+      ),
+      tags$hr(),
       p(
         class = "app-note",
-        "Se conservan variantes Pathogenic, Likely pathogenic y Uncertain significance, ",
-        "con moleculeCount >= 10 y VAF >= 0.05 cuando esos campos existen. ",
+        "Los filtros anteriores se aplican solo a las variantes estructurales clasificadas. ",
         "Las aneuploidias se incorporan desde su propio archivo sin filtro de clasificacion."
       ),
       tags$h4("Resumen"),
@@ -86,7 +115,10 @@ server <- function(input, output, session) {
         classified_path = input$classified_file$datapath,
         classified_name = input$classified_file$name,
         aneuploidy_path = input$aneuploidy_file$datapath,
-        aneuploidy_name = input$aneuploidy_file$name
+        aneuploidy_name = input$aneuploidy_file$name,
+        classifications = input$classification_filter,
+        min_molecule_count = input$min_molecule_count,
+        min_vaf = input$min_vaf
       ),
       error = function(error) {
         list(error = conditionMessage(error))
