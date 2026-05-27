@@ -7,3 +7,4 @@ workflow_data.rds
 *.RData
 *.Rhistory
 .Rproj.user/
+*.bed
