@@ -17,6 +17,11 @@ is_processed_oncoprint <- function(x) {
   is.list(x) && is.null(x$error) && !is.null(x$complete_matrix)
 }
 
+APP_NAME <- "BioCalc"
+APP_VERSION <- "1.0.0"
+APP_REPO_URL <- "https://github.com/GenDoc94/BioCalc"
+APP_LICENSE <- "MIT"
+
 ui <- fluidPage(
   tags$head(
     tags$style(HTML(
@@ -42,13 +47,279 @@ ui <- fluidPage(
         background: #fff0f0;
         border: 1px solid #e4b3b3;
       }
+      .info-panel {
+        line-height: 1.6;
+        padding-bottom: 1.5rem;
+      }
+      .info-sidebar {
+        text-align: center;
+      }
+      .info-sidebar-logo {
+        max-width: 5rem;
+        margin: 0.25rem auto 0.75rem;
+        display: block;
+      }
+      .info-sidebar-version {
+        color: #666;
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+      }
+      .info-sidebar-section {
+        text-align: left;
+        margin-bottom: 1rem;
+      }
+      .info-sidebar-section h4 {
+        font-size: 1rem;
+        margin: 0 0 0.4rem;
+      }
+      .info-sidebar-section ul {
+        padding-left: 1.2rem;
+        margin: 0;
+        font-size: 0.92rem;
+      }
+      .info-sidebar-links {
+        text-align: left;
+        font-size: 0.92rem;
+        margin-top: 1rem;
+      }
+      .info-sidebar-links p {
+        margin: 0.35rem 0;
+      }
+      .info-sidebar .app-author {
+        margin-top: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid #ddd;
+        text-align: center;
+        font-size: 0.88rem;
+      }
+      .info-panel h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+      .info-panel h4 {
+        margin-top: 1.25rem;
+        margin-bottom: 0.5rem;
+      }
+      .info-panel ul {
+        margin-bottom: 1rem;
+      }
+      .info-panel code {
+        background: #f4f4f4;
+        padding: 0.1rem 0.35rem;
+        border-radius: 3px;
+        font-size: 0.92em;
+      }
+      .info-screenshots {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin: 1rem 0 1.5rem;
+      }
+      .info-screenshot {
+        flex: 1 1 18rem;
+        max-width: 100%;
+      }
+      .info-screenshot img {
+        width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      .info-screenshot figcaption {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #555;
+        text-align: center;
+      }
+      .app-author {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ddd;
+        text-align: center;
+        color: #555;
+        font-size: 0.95rem;
+      }
+      .app-author a {
+        color: inherit;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+      .app-author a:hover {
+        text-decoration: underline;
+      }
+      .app-author img {
+        height: 1em;
+        vertical-align: middle;
+      }
+      .app-author-sep {
+        margin: 0 0.5rem;
+        color: #aaa;
+      }
       "
     ))
   ),
   titlePanel("BioCalc"),
   tabsetPanel(
     tabPanel(
-      "Información"
+      "Información",
+      sidebarLayout(
+        sidebarPanel(
+          width = 3,
+          class = "info-sidebar",
+          tags$img(
+            src = "logo_hem.png",
+            class = "info-sidebar-logo",
+            alt = paste(APP_NAME, "logo")
+          ),
+          tags$h3(APP_NAME, style = "margin-top: 0;"),
+          tags$p(class = "info-sidebar-version", paste("Versión", APP_VERSION)),
+          tags$hr(),
+          div(
+            class = "info-sidebar-section",
+            tags$h4("Funcionalidades"),
+            tags$ul(
+              tags$li("CirclePlot por muestra"),
+              tags$li("Oncoprint de cohortes"),
+              tags$li("Filtros de clasificación, moléculas y VAF"),
+              tags$li("Exportación PDF, PNG y CSV")
+            )
+          ),
+          div(
+            class = "info-sidebar-section",
+            tags$h4("Archivos de entrada"),
+            tags$ul(
+              tags$li(tags$code("*_Classified_Variants*.txt")),
+              tags$li(tags$code("*_Aneuploidy.txt")),
+              tags$li(tags$code(".bed"), " (solo Oncoprint)")
+            )
+          ),
+          div(
+            class = "info-sidebar-links",
+            tags$p(
+              tags$strong("Repositorio: "),
+              tags$a(href = APP_REPO_URL, target = "_blank", rel = "noreferrer", "GitHub")
+            ),
+            tags$p(
+              tags$strong("Licencia: "),
+              tags$a(
+                href = paste0(APP_REPO_URL, "/blob/main/LICENSE"),
+                target = "_blank",
+                rel = "noreferrer",
+                APP_LICENSE
+              )
+            ),
+            tags$p(
+              tags$strong("Datos: "),
+              "en uso local, los archivos se procesan en tu equipo."
+            )
+          ),
+          div(
+            class = "app-author",
+            tags$span("Created by "),
+            tags$a(
+              href = "https://github.com/GenDoc94",
+              target = "_blank",
+              rel = "noreferrer",
+              "GenDoc94",
+              tags$img(src = "logo_hem.png", alt = "GenDoc94 logo")
+            ),
+            tags$br(),
+            tags$a(
+              href = "https://buymeacoffee.com/gendoc94",
+              target = "_blank",
+              rel = "noreferrer",
+              "Buy me a coffee",
+              tags$img(
+                src = "https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png",
+                alt = "Buy me a coffee"
+              )
+            )
+          )
+        ),
+        mainPanel(
+          width = 9,
+          div(
+            class = "info-panel",
+            h3("¿Para qué sirve esta aplicación?"),
+        p(
+          "Esta aplicación está pensada para procesar los archivos de variantes clasificadas ",
+          tags$code("XXX_Classified_Variants_.txt"),
+          " y los archivos de aneuploidías ",
+          tags$code("XXX_Aneuploidy.txt"),
+          " de vuestras muestras de Bionano que hayáis descargado, y poder hacer ",
+          strong("circleplots personalizados"),
+          " y vuestros propios ",
+          strong("oncoprints"),
+          "."
+        ),
+        h4("Descarga de archivos desde OGM"),
+        p(
+          "Para descargar los archivos necesarios de OGM, hacerlo a través de la plataforma de análisis ",
+          "en el botón de ",
+          strong("descargar"),
+          "."
+        ),
+        tags$ul(
+          tags$li(
+            tags$strong("Classified_Variants: "),
+            "se recomienda descargarlos una vez se hayan categorizado las variantes ",
+            "(porque luego puedes filtrar las que quieras en la app)."
+          ),
+          tags$li(
+            tags$strong("Aneuploidy: "),
+            "se recomienda descargarlos tal cual, para que se descarguen todas las aneuploidías."
+          )
+        ),
+        h4("Capturas de la plataforma"),
+        p(
+          "Para descargar los ficheros desde la plataforma, pulsa el botón ",
+          strong("Download"),
+          ":"
+        ),
+        div(
+          class = "info-screenshots",
+          tags$figure(
+            class = "info-screenshot",
+            tags$img(
+              src = "download_button.png",
+              alt = "Botón Download en la plataforma OGM"
+            ),
+            tags$figcaption("Botón Download")
+          )
+        ),
+        p("Ejemplo de cómo descargar cada tipo de archivo:"),
+        div(
+          class = "info-screenshots",
+          tags$figure(
+            class = "info-screenshot",
+            tags$img(
+              src = "ogm_download_aneuploidy.png",
+              alt = "Captura: descarga del archivo Aneuploidy"
+            ),
+            tags$figcaption("Aneuploidy — Descargar tal cual (todas las aneuploidías)")
+          ),
+          tags$figure(
+            class = "info-screenshot",
+            tags$img(
+              src = "ogm_download_classified_variants.png",
+              alt = "Captura: descarga del archivo Classified_Variants"
+            ),
+            tags$figcaption("Classified_Variants — Descargar tras categorizar (para poder filtrar)")
+          )
+        ),
+        tags$p(
+          class = "app-note",
+          em(
+            "Herramienta de apoyo a la investigación. No sustituye la interpretación clínica ",
+            "ni la validación en la plataforma OGM."
+          )
+        )
+          )
+        )
+      )
     ),
     tabPanel(
       "CirclePlot",

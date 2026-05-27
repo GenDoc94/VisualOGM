@@ -1,43 +1,90 @@
-BioCalc Shiny Circle Plot
-=========================
+# BioCalc
 
-Aplicacion Shiny ligera para generar un circle plot a partir de dos archivos del mismo caso:
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-- `*_Classified_Variants*.txt`
-- `*_Aneuploidy.txt`
+Aplicación **Shiny** para visualizar resultados de **Bionano OGM**: circle plots por muestra y oncoprints de cohortes a partir de los archivos exportados por la plataforma de análisis.
 
-La app valida que ambos archivos empiecen por el mismo numero de muestra, lee los datos con la misma logica del workflow y permite ajustar de forma reactiva:
+Repositorio: [github.com/GenDoc94/BioCalc](https://github.com/GenDoc94/BioCalc)
 
-- clasificaciones de variantes estructurales a incluir: `Pathogenic`, `Likely pathogenic` y `Uncertain significance`
-- moleculas minimas, por defecto `>= 10`
-- `VAF` minima en porcentaje, por defecto `>= 5%` (`0.05` en los archivos)
-- aneuploidias del archivo `Aneuploidy`, sin filtro de clasificacion
+## Funcionalidades
 
-Uso local
----------
+- **CirclePlot**: un par `*_Classified_Variants*.txt` + `*_Aneuploidy.txt` por muestra.
+- **Oncoprint**: varios pares de archivos + un `.bed` de regiones de interés.
+- Filtros por clasificación ACMG, número de moléculas y VAF.
+- Exportación a PDF, PNG (CirclePlot) y CSV de variantes filtradas.
 
-Instala las dependencias si no estan disponibles:
+La pestaña **Información** de la app incluye capturas de cómo descargar los ficheros desde OGM.
+
+## Requisitos
+
+- R >= 4.1 recomendado
+- Paquetes CRAN: `shiny`, `tidyverse`, `circlize`, `readr`
+- Paquete Bioconductor: `ComplexHeatmap`
 
 ```r
-install.packages(c("shiny", "tidyverse", "circlize"))
+install.packages(c("shiny", "tidyverse", "circlize", "readr"))
+
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+BiocManager::install("ComplexHeatmap")
 ```
 
-Ejecuta la aplicacion desde la raiz del proyecto:
+## Instalación y uso local
 
 ```r
+# Clonar el repositorio
+# git clone https://github.com/GenDoc94/BioCalc.git
+# setwd("BioCalc")
+
 shiny::runApp()
 ```
 
-Despues sube el archivo de variantes clasificadas y el archivo de aneuploidias. El grafico se actualiza automaticamente al cambiar los archivos o los filtros y se puede descargar en PDF o PNG.
+Sube los archivos desde la interfaz. En ejecución local, los datos se procesan en tu equipo.
 
-Archivos principales
---------------------
+## Archivos de entrada
 
-- `app.R`: interfaz y servidor Shiny.
-- `functions/shiny_data.R`: lectura, validacion, combinacion y filtrado de los archivos subidos.
-- `functions/circleplot.R`: generacion del circle plot con `circlize`.
+| Archivo | Uso |
+|---------|-----|
+| `*_Classified_Variants*.txt` | Variantes estructurales clasificadas |
+| `*_Aneuploidy.txt` | Aneuploidías |
+| `*.bed` | Regiones para Oncoprint (`chrom`, `start`, `end`, `name`) |
 
-Datos sensibles
-----------------
+Los nombres de Classified_Variants y Aneuploidy de un mismo caso deben compartir el mismo identificador de muestra al inicio del nombre.
 
-Los directorios con datos locales o de ejemplo estan ignorados por Git mediante `.gitignore` (`examples_files/`, `files/`, `bases/`, `graphs/`). Si alguno de esos archivos ya estuviera versionado, habria que retirarlo del seguimiento de Git antes de publicar el repositorio.
+## Estructura del proyecto
+
+- `app.R` — interfaz y servidor Shiny
+- `functions/` — lectura, validación y gráficos
+- `www/` — logo y capturas de la pestaña Información
+
+## Publicar en internet (opcional)
+
+Para compartir la app sin que cada usuario instale R:
+
+- [shinyapps.io](https://www.shinyapps.io/) — despliegue sencillo; revisa su política de privacidad si subes datos reales.
+- Posit Connect, Shiny Server o Docker con tu propio servidor.
+
+En despliegues públicos, indica claramente quién opera el servidor y cómo se tratan los datos clínicos.
+
+## Aviso legal / uso clínico
+
+BioCalc es una **herramienta de apoyo a la investigación y la visualización**. No sustituye la interpretación clínica, la validación en la plataforma OGM ni ningún sistema diagnóstico certificado. El usuario es responsable del uso que haga de los resultados.
+
+## Licencia
+
+Este proyecto está bajo licencia **MIT** — ver [LICENSE](LICENSE).
+
+## Cómo citar
+
+Si usas BioCalc en un trabajo, cita el repositorio (también disponible en [CITATION.cff](CITATION.cff)):
+
+> GenDoc94 (2026). *BioCalc* (v1.0.0). https://github.com/GenDoc94/BioCalc
+
+## Contribuir
+
+Consulta [CONTRIBUTING.md](CONTRIBUTING.md) para reportar errores o enviar mejoras.
+
+## Autor
+
+**GenDoc94** — [GitHub](https://github.com/GenDoc94) · [Buy me a coffee](https://buymeacoffee.com/gendoc94)
