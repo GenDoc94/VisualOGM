@@ -17,9 +17,9 @@ is_processed_oncoprint <- function(x) {
   is.list(x) && is.null(x$error) && !is.null(x$complete_matrix)
 }
 
-APP_NAME <- "BioCalc"
+APP_NAME <- "VisualOGM"
 APP_VERSION <- "1.0.0"
-APP_REPO_URL <- "https://github.com/GenDoc94/BioCalc"
+APP_REPO_URL <- "https://github.com/GenDoc94/VisualOGM"
 APP_LICENSE <- "MIT"
 
 ui <- fluidPage(
@@ -132,6 +132,18 @@ ui <- fluidPage(
         color: #555;
         text-align: center;
       }
+      .info-bed-download {
+        margin: 1rem 0 1.25rem;
+      }
+      .info-bed-table {
+        font-size: 0.95rem;
+        margin: 0.75rem 0 1rem;
+      }
+      .info-bed-table th,
+      .info-bed-table td {
+        padding: 0.35rem 0.75rem 0.35rem 0;
+        vertical-align: top;
+      }
       .app-author {
         margin-top: 2rem;
         padding-top: 1rem;
@@ -161,7 +173,7 @@ ui <- fluidPage(
       "
     ))
   ),
-  titlePanel("BioCalc"),
+  titlePanel(APP_NAME),
   tabsetPanel(
     tabPanel(
       "Información",
@@ -310,6 +322,104 @@ ui <- fluidPage(
             tags$figcaption("Classified_Variants — Descargar tras categorizar (para poder filtrar)")
           )
         ),
+        h4("Archivo .bed para Oncoprint"),
+        p(
+          "El oncoprint requiere un archivo ",
+          tags$code(".bed"),
+          " con las regiones que quieras evaluar en la cohorte. La primera fila es la ",
+          strong("cabecera informativa del BED"),
+          " (línea ",
+          tags$code("track"),
+          "); la aplicación la omite al leer el fichero. A partir de la segunda fila, ",
+          "cada línea define una región de interés. Las columnas van ",
+          strong("separadas por tabuladores"),
+          " (no por espacios)."
+        ),
+        tags$table(
+          class = "info-bed-table",
+          tags$thead(
+            tags$tr(
+              tags$th("Columna"),
+              tags$th("Contenido")
+            )
+          ),
+          tags$tbody(
+            tags$tr(
+              tags$td("1"),
+              tags$td(
+                "Número de cromosoma (1–22). Cromosoma X = ",
+                tags$code("23"),
+                ", cromosoma Y = ",
+                tags$code("24"),
+                ", igual que en los archivos ",
+                tags$code("Classified_Variants"),
+                " (columnas ",
+                tags$code("RefcontigID1"),
+                " / ",
+                tags$code("RefcontigID2"),
+                ")."
+              )
+            ),
+            tags$tr(
+              tags$td("2"),
+              tags$td("Inicio de la región de interés (posición en el genoma de referencia).")
+            ),
+            tags$tr(
+              tags$td("3"),
+              tags$td("Fin de la región de interés.")
+            ),
+            tags$tr(
+              tags$td("4"),
+              tags$td(
+                "Nombre de la región. Si indicas solo el gen (p. ej. ",
+                tags$code("PDGFRA"),
+                "), se buscarán ",
+                strong("todas"),
+                " las alteraciones estructurales que solapen esa región. Si añades ",
+                tags$code("_"),
+                " seguido del tipo de alteración (p. ej. ",
+                tags$code("TP53_deletion"),
+                "), solo se buscará esa alteración concreta."
+              )
+            )
+          )
+        ),
+        p("Tipos de alteración que puedes indicar tras el guion bajo en la cuarta columna:"),
+        tags$ul(
+          tags$li(tags$code("insertion")),
+          tags$li(tags$code("deletion")),
+          tags$li(tags$code("inversion")),
+          tags$li(tags$code("translocation")),
+          tags$li(tags$code("rearrangement"), " (se trata como translocación/reordenamiento)"),
+          tags$li(tags$code("duplication")),
+          tags$li(tags$code("gain")),
+          tags$li(tags$code("loss"))
+        ),
+        p(
+          "Ejemplos de nombres en la cuarta columna: ",
+          tags$code("CDKN2C_deletion"),
+          ", ",
+          tags$code("CKS1B_gain"),
+          ", ",
+          tags$code("MYC_rearrangement"),
+          ", ",
+          tags$code("CCND1_t(11;14)_CCND1::IGH_translocation"),
+          ", o solo el gen ",
+          tags$code("BIRC3"),
+          " para cualquier variante en esa zona."
+        ),
+        p(
+          "La primera fila del ejemplo tiene el formato habitual de cabecera BED, por ejemplo: ",
+          tags$code('track db="hg38" name="filter_example" description="..."')
+        ),
+        div(
+          class = "info-bed-download",
+          downloadButton(
+            "download_bed_example",
+            "Descargar filter_example.bed (plantilla)",
+            class = "btn-primary"
+          )
+        ),
         tags$p(
           class = "app-note",
           em(
@@ -394,7 +504,9 @@ ui <- fluidPage(
             class = "app-note",
             "Sube varios Classified_Variants y varios Aneuploidy (un par por paciente, ",
             "mismo numero al inicio del nombre). Tambien es obligatorio subir un archivo .bed ",
-            "con las regiones a evaluar (archivo .bed con columnas chrom, start, end y name)."
+            "con las regiones a evaluar (consulta el formato en la pestaña ",
+            strong("Información"),
+            ")."
           ),
           fileInput(
             "onco_classified_files",
@@ -477,6 +589,18 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  bed_example_path <- file.path("www", "filter_example.bed")
+
+  output$download_bed_example <- downloadHandler(
+    filename = "filter_example.bed",
+    content = function(file) {
+      if (!file.exists(bed_example_path)) {
+        stop("No se encuentra el archivo de ejemplo filter_example.bed.", call. = FALSE)
+      }
+      file.copy(bed_example_path, file)
+    }
+  )
+
   processed_case <- reactive({
     req(input$classified_file, input$aneuploidy_file)
 

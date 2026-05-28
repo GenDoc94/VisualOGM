@@ -1,12 +1,12 @@
-# Contribuir a BioCalc
+# Contribuir a VisualOGM
 
-Gracias por tu interés en mejorar BioCalc.
+Gracias por tu interés en mejorar VisualOGM.
 
 ## Cómo reportar un problema
 
-1. Comprueba que no exista ya un [issue abierto](https://github.com/GenDoc94/BioCalc/issues).
+1. Comprueba que no exista ya un [issue abierto](https://github.com/GenDoc94/VisualOGM/issues).
 2. Abre un issue nuevo con:
-   - versión de BioCalc (pestaña **Información**),
+   - versión de VisualOGM (pestaña **Información**),
    - versión de R (`sessionInfo()`),
    - pasos para reproducir el error,
    - mensaje de error completo (si lo hay),
@@ -27,4 +27,4 @@ Gracias por tu interés en mejorar BioCalc.
 
 ## Privacidad
 
-BioCalc procesa los archivos en el servidor Shiny donde se ejecute la app. Si despliegas una instancia pública, deja claro en el README quién opera el servidor y cómo se tratan los datos.
+VisualOGM procesa los archivos en el servidor Shiny donde se ejecute la app. Si despliegas una instancia pública, deja claro en el README quién opera el servidor y cómo se tratan los datos.

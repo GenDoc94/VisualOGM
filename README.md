@@ -1,10 +1,10 @@
-# BioCalc
+# VisualOGM
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Aplicación **Shiny** para visualizar resultados de **Bionano OGM**: circle plots por muestra y oncoprints de cohortes a partir de los archivos exportados por la plataforma de análisis.
 
-Repositorio: [github.com/GenDoc94/BioCalc](https://github.com/GenDoc94/BioCalc)
+Repositorio: [github.com/GenDoc94/VisualOGM](https://github.com/GenDoc94/VisualOGM)
 
 ## Funcionalidades
 
@@ -34,8 +34,8 @@ BiocManager::install("ComplexHeatmap")
 
 ```r
 # Clonar el repositorio
-# git clone https://github.com/GenDoc94/BioCalc.git
-# setwd("BioCalc")
+# git clone https://github.com/GenDoc94/VisualOGM.git
+# setwd("VisualOGM")
 
 shiny::runApp()
 ```
@@ -69,7 +69,7 @@ En despliegues públicos, indica claramente quién opera el servidor y cómo se 
 
 ## Aviso legal / uso clínico
 
-BioCalc es una **herramienta de apoyo a la investigación y la visualización**. No sustituye la interpretación clínica, la validación en la plataforma OGM ni ningún sistema diagnóstico certificado. El usuario es responsable del uso que haga de los resultados.
+VisualOGM es una **herramienta de apoyo a la investigación y la visualización**. No sustituye la interpretación clínica, la validación en la plataforma OGM ni ningún sistema diagnóstico certificado. El usuario es responsable del uso que haga de los resultados.
 
 ## Licencia
 
@@ -77,9 +77,9 @@ Este proyecto está bajo licencia **MIT** — ver [LICENSE](LICENSE).
 
 ## Cómo citar
 
-Si usas BioCalc en un trabajo, cita el repositorio (también disponible en [CITATION.cff](CITATION.cff)):
+Si usas VisualOGM en un trabajo, cita el repositorio (también disponible en [CITATION.cff](CITATION.cff)):
 
-> GenDoc94 (2026). *BioCalc* (v1.0.0). https://github.com/GenDoc94/BioCalc
+> GenDoc94 (2026). *VisualOGM* (v1.0.0). https://github.com/GenDoc94/VisualOGM
 
 ## Contribuir
 

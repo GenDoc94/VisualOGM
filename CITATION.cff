@@ -1,13 +1,13 @@
 cff-version: 1.2.0
-title: BioCalc
+title: VisualOGM
 message: >-
   If you use this software, please cite it as below.
 type: software
 authors:
   - family-names: GenDoc94
     affiliation: Independent
-repository-code: https://github.com/GenDoc94/BioCalc
-url: https://github.com/GenDoc94/BioCalc
+repository-code: https://github.com/GenDoc94/VisualOGM
+url: https://github.com/GenDoc94/VisualOGM
 license: MIT
 version: 1.0.0
 date-released: 2026-05-27

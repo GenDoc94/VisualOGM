@@ -8,3 +8,4 @@ workflow_data.rds
 *.Rhistory
 .Rproj.user/
 *.bed
+!www/filter_example.bed
