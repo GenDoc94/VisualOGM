@@ -88,3 +88,5 @@ Consulta [CONTRIBUTING.md](CONTRIBUTING.md) para reportar errores o enviar mejor
 ## Autor
 
 **GenDoc94** — [GitHub](https://github.com/GenDoc94) · [Buy me a coffee](https://buymeacoffee.com/gendoc94)
+
+En algunas fases del desarrollo se utilizaron asistentes de IA como apoyo; el diseño, la validación y la mayor parte del código son trabajo propio del autor.
