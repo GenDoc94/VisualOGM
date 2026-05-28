@@ -18,11 +18,11 @@ La pestaña **Información** de la app incluye capturas de cómo descargar los f
 ## Requisitos
 
 - R >= 4.1 recomendado
-- Paquetes CRAN: `shiny`, `tidyverse`, `circlize`, `readr`
+- Paquetes CRAN: `shiny`, `bslib`, `tidyverse`, `circlize`, `readr`
 - Paquete Bioconductor: `ComplexHeatmap`
 
 ```r
-install.packages(c("shiny", "tidyverse", "circlize", "readr"))
+install.packages(c("shiny", "bslib", "tidyverse", "circlize", "readr"))
 
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")

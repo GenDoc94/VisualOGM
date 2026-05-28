@@ -2,6 +2,7 @@ options(shiny.maxRequestSize = 100 * 1024^2)
 
 suppressPackageStartupMessages({
   library(shiny)
+  library(bslib)
 })
 
 source(file.path("functions", "shiny_data.R"))
@@ -21,31 +22,99 @@ APP_NAME <- "VisualOGM"
 APP_VERSION <- "1.0.0"
 APP_REPO_URL <- "https://github.com/GenDoc94/VisualOGM"
 APP_LICENSE <- "MIT"
+APP_COLOR_PRIMARY <- "#007BFF"
+APP_COLOR_DARK <- "#004085"
 
-ui <- fluidPage(
+app_theme <- bs_theme(
+  version = 5,
+  primary = APP_COLOR_PRIMARY,
+  secondary = APP_COLOR_DARK,
+  info = APP_COLOR_DARK,
+  link_color = APP_COLOR_PRIMARY,
+  heading_color = APP_COLOR_DARK,
+  "nav-tabs-link-active-color" = APP_COLOR_DARK,
+  "nav-tabs-link-active-border-color" = APP_COLOR_PRIMARY,
+  base_font = font_collection(
+    "system-ui",
+    "-apple-system",
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    "Arial",
+    "sans-serif"
+  )
+)
+
+ui <- page_fluid(
+  theme = app_theme,
+  title = APP_NAME,
   tags$head(
     tags$style(HTML(
       "
+      .app-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin: 0.25rem 0 1rem;
+        padding-bottom: 0.85rem;
+        border-bottom: 1px solid var(--bs-border-color);
+      }
+      .app-header-brand {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      .app-title-logo {
+        max-width: min(22rem, 100%);
+        height: auto;
+        display: block;
+      }
+      .app-header-actions {
+        flex: 0 0 auto;
+      }
+      .app-header-actions .form-group {
+        margin-bottom: 0;
+      }
+      .nav-tabs .nav-link {
+        font-weight: 500;
+      }
+      [data-bs-theme='dark'] .nav-tabs .nav-link.active,
+      [data-bs-theme='dark'] .nav-tabs .nav-item.show .nav-link {
+        color: #fff;
+        --bs-nav-tabs-link-active-color: #fff;
+        border-bottom-color: #007BFF;
+      }
       .app-note {
-        color: #555;
+        color: var(--bs-secondary-color);
         margin-bottom: 1rem;
       }
       .status-box {
-        border-radius: 6px;
+        border-radius: 0.5rem;
         margin-bottom: 1rem;
         padding: 0.8rem 1rem;
       }
       .status-info {
-        background: #eef6ff;
-        border: 1px solid #b7d7f2;
+        background: rgba(0, 123, 255, 0.08);
+        border: 1px solid rgba(0, 123, 255, 0.28);
+        color: var(--bs-body-color);
       }
       .status-ok {
-        background: #eef8f0;
-        border: 1px solid #b8dfc0;
+        background: rgba(25, 135, 84, 0.08);
+        border: 1px solid rgba(25, 135, 84, 0.28);
       }
       .status-error {
-        background: #fff0f0;
-        border: 1px solid #e4b3b3;
+        background: rgba(220, 53, 69, 0.08);
+        border: 1px solid rgba(220, 53, 69, 0.28);
+      }
+      [data-bs-theme='dark'] .status-info {
+        background: rgba(0, 123, 255, 0.16);
+        border-color: rgba(0, 123, 255, 0.4);
+      }
+      [data-bs-theme='dark'] .status-ok {
+        background: rgba(25, 135, 84, 0.16);
+      }
+      [data-bs-theme='dark'] .status-error {
+        background: rgba(220, 53, 69, 0.16);
       }
       .info-panel {
         line-height: 1.6;
@@ -54,13 +123,27 @@ ui <- fluidPage(
       .info-sidebar {
         text-align: center;
       }
-      .info-sidebar-logo {
-        max-width: 5rem;
-        margin: 0.25rem auto 0.75rem;
-        display: block;
+      .info-sidebar-brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        margin: 0.15rem 0 0.65rem;
+        flex-wrap: wrap;
+      }
+      .info-sidebar-brand .logo-vo {
+        height: 3.25rem;
+        width: auto;
+        flex: 0 0 auto;
+      }
+      .info-sidebar-brand .logo-wordmark {
+        height: 2.15rem;
+        width: auto;
+        max-width: 9.5rem;
+        flex: 0 1 auto;
       }
       .info-sidebar-version {
-        color: #666;
+        color: var(--bs-secondary-color);
         font-size: 0.95rem;
         margin-bottom: 1rem;
       }
@@ -88,7 +171,7 @@ ui <- fluidPage(
       .info-sidebar .app-author {
         margin-top: 1rem;
         padding-top: 0.75rem;
-        border-top: 1px solid #ddd;
+        border-top: 1px solid var(--bs-border-color);
         text-align: center;
         font-size: 0.88rem;
       }
@@ -104,9 +187,10 @@ ui <- fluidPage(
         margin-bottom: 1rem;
       }
       .info-panel code {
-        background: #f4f4f4;
+        background: var(--bs-tertiary-bg);
+        color: var(--bs-body-color);
         padding: 0.1rem 0.35rem;
-        border-radius: 3px;
+        border-radius: 0.25rem;
         font-size: 0.92em;
       }
       .info-screenshots {
@@ -122,15 +206,28 @@ ui <- fluidPage(
       .info-screenshot img {
         width: 100%;
         height: auto;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--bs-border-color);
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 10px rgba(0, 64, 133, 0.08);
+      }
+      [data-bs-theme='dark'] .info-screenshot img {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
       }
       .info-screenshot figcaption {
         margin-top: 0.5rem;
         font-size: 0.9rem;
-        color: #555;
+        color: var(--bs-secondary-color);
         text-align: center;
+      }
+      .info-screenshot--compact {
+        flex: 0 0 auto;
+        max-width: 100%;
+      }
+      .info-screenshot--compact img {
+        width: auto;
+        max-width: min(12rem, 100%);
+        height: auto;
+        image-rendering: -webkit-optimize-contrast;
       }
       .info-bed-download {
         margin: 1rem 0 1.25rem;
@@ -147,9 +244,9 @@ ui <- fluidPage(
       .app-author {
         margin-top: 2rem;
         padding-top: 1rem;
-        border-top: 1px solid #ddd;
+        border-top: 1px solid var(--bs-border-color);
         text-align: center;
-        color: #555;
+        color: var(--bs-secondary-color);
         font-size: 0.95rem;
       }
       .app-author a {
@@ -168,12 +265,62 @@ ui <- fluidPage(
       }
       .app-author-sep {
         margin: 0 0.5rem;
-        color: #aaa;
+        color: var(--bs-border-color);
+      }
+      .btn-primary {
+        --bs-btn-bg: #007BFF;
+        --bs-btn-border-color: #007BFF;
+        --bs-btn-hover-bg: #0069d9;
+        --bs-btn-hover-border-color: #0062cc;
+        --bs-btn-active-bg: #004085;
+        --bs-btn-active-border-color: #004085;
+      }
+      .irs--shiny .irs-single,
+      .irs--shiny .irs-from,
+      .irs--shiny .irs-to {
+        color: #fff;
+      }
+      .filters-row {
+        margin-left: 0;
+        margin-right: 0;
+      }
+      .filters-row > [class*='col-'] {
+        padding-left: 0.35rem;
+        padding-right: 0.35rem;
+      }
+      .filters-row > [class*='col-']:first-child {
+        padding-left: 0;
+      }
+      .filters-row > [class*='col-']:last-child {
+        padding-right: 0;
+      }
+      .filters-row .shiny-input-container {
+        margin-bottom: 0.65rem;
+      }
+      .filters-row .shiny-input-container:last-child {
+        margin-bottom: 0;
       }
       "
     ))
   ),
-  titlePanel(APP_NAME),
+  div(
+    class = "app-header",
+    div(
+      class = "app-header-brand",
+      tags$img(
+        src = "VisualOGM.png",
+        class = "app-title-logo",
+        alt = APP_NAME
+      )
+    ),
+    div(
+      class = "app-header-actions",
+      input_dark_mode(
+        id = "dark_mode",
+        mode = "light"
+      )
+    )
+  ),
   tabsetPanel(
     tabPanel(
       "Información",
@@ -181,17 +328,27 @@ ui <- fluidPage(
         sidebarPanel(
           width = 3,
           class = "info-sidebar",
-          tags$img(
-            src = "logo_hem.png",
-            class = "info-sidebar-logo",
-            alt = paste(APP_NAME, "logo")
+          div(
+            class = "info-sidebar-brand",
+            tags$img(
+              src = "VO.png",
+              class = "logo-vo",
+              alt = "VisualOGM icon"
+            ),
+            tags$img(
+              src = "VisualOGM.png",
+              class = "logo-wordmark",
+              alt = APP_NAME
+            )
           ),
-          tags$h3(APP_NAME, style = "margin-top: 0;"),
-          tags$p(class = "info-sidebar-version", paste("Versión", APP_VERSION)),
+          tags$p(
+            class = "info-sidebar-version",
+            tags$em(paste("Versión", APP_VERSION))
+          ),
           tags$hr(),
           div(
             class = "info-sidebar-section",
-            tags$h4("Funcionalidades"),
+            tags$h4(tags$strong("Funcionalidades")),
             tags$ul(
               tags$li("CirclePlot por muestra"),
               tags$li("Oncoprint de cohortes"),
@@ -201,7 +358,7 @@ ui <- fluidPage(
           ),
           div(
             class = "info-sidebar-section",
-            tags$h4("Archivos de entrada"),
+            tags$h4(tags$strong("Archivos de entrada")),
             tags$ul(
               tags$li(tags$code("*_Classified_Variants*.txt")),
               tags$li(tags$code("*_Aneuploidy.txt")),
@@ -294,7 +451,7 @@ ui <- fluidPage(
         div(
           class = "info-screenshots",
           tags$figure(
-            class = "info-screenshot",
+            class = "info-screenshot info-screenshot--compact",
             tags$img(
               src = "download_button.png",
               alt = "Botón Download en la plataforma OGM"
@@ -412,6 +569,52 @@ ui <- fluidPage(
           "La primera fila del ejemplo tiene el formato habitual de cabecera BED, por ejemplo: ",
           tags$code('track db="hg38" name="filter_example" description="..."')
         ),
+        h4("Padding CNV y SV (solapamiento)"),
+        p(
+          "En la pestaña ",
+          strong("Oncoprint"),
+          ", los campos ",
+          tags$strong("Padding CNV (bp)"),
+          " y ",
+          tags$strong("Padding SV (bp)"),
+          " no amplían la región del BED en el fichero: definen el ",
+          strong("solapamiento"),
+          " que estás dispuesto a aceptar para considerar que una variante estructural ",
+          strong('"toca"'),
+          " el gen o la región que buscas."
+        ),
+        p(
+          "En la práctica, a cada intervalo del BED se le suma ese margen a izquierda y derecha ",
+          "antes de comprobar si alguna alteración del paciente cae en esa zona ampliada. ",
+          "El ",
+          tags$strong("padding CNV"),
+          " se aplica a ganancias y pérdidas (CNV); el ",
+          tags$strong("padding SV"),
+          ", al resto de variantes estructurales (deleciones puntuales, inversiones, ",
+          "translocaciones, etc.)."
+        ),
+        p(
+          "Por ejemplo, un ",
+          tags$strong("Padding CNV"),
+          " de ",
+          tags$code("500000"),
+          " significa ",
+          tags$strong("500 kbp"),
+          " hacia la izquierda y ",
+          tags$strong("500 kbp"),
+          " hacia la derecha",
+          " respecto a los límites de la región del BED: se buscarán alteraciones que ",
+          "solapen esa ventana ampliada, aunque el breakpoint no caiga exactamente ",
+          "dentro del gen anotado."
+        ),
+        p(
+          "Con ",
+          tags$strong("Padding SV"),
+          " en ",
+          tags$code("0"),
+          " (valor por defecto), las SV deben solaparse con la región del BED sin margen ",
+          "extra; puedes subirlo si quieres ser más permisivo con breakpoints cercanos."
+        ),
         div(
           class = "info-bed-download",
           downloadButton(
@@ -424,7 +627,7 @@ ui <- fluidPage(
           class = "app-note",
           em(
             "Herramienta de apoyo a la investigación. No sustituye la interpretación clínica ",
-            "ni la validación en la plataforma OGM."
+            "ni la validación en la plataforma Bionano Access."
           )
         )
           )
@@ -442,45 +645,54 @@ ui <- fluidPage(
           ),
           fileInput(
             "classified_file",
-            "Archivo Classified_Variants",
+            label = tags$strong("Archivo Classified_Variants"),
             accept = c(".txt", "text/plain")
           ),
           fileInput(
             "aneuploidy_file",
-            "Archivo Aneuploidy",
+            label = tags$strong("Archivo Aneuploidy"),
             accept = c(".txt", "text/plain")
           ),
           tags$hr(),
-          checkboxGroupInput(
-            "classification_filter",
-            "Variantes a incluir",
-            choices = c(
-              "Pathogenic",
-              "Likely pathogenic",
-              "Uncertain significance"
+          fluidRow(
+            class = "filters-row",
+            column(
+              width = 6,
+              checkboxGroupInput(
+                "classification_filter",
+                label = tags$strong("Variantes a incluir"),
+                choices = c(
+                  "Pathogenic",
+                  "Likely pathogenic",
+                  "Uncertain significance"
+                ),
+                selected = c(
+                  "Pathogenic",
+                  "Likely pathogenic",
+                  "Uncertain significance"
+                )
+              )
             ),
-            selected = c(
-              "Pathogenic",
-              "Likely pathogenic",
-              "Uncertain significance"
+            column(
+              width = 6,
+              sliderInput(
+                "min_molecule_count",
+                label = tags$strong("Moléculas mínimas"),
+                value = 10,
+                min = 1,
+                max = 100,
+                step = 1
+              ),
+              sliderInput(
+                "min_vaf",
+                label = tags$strong("VAF mínima (%)"),
+                value = 5,
+                min = 0,
+                max = 100,
+                step = 1,
+                post = "%"
+              )
             )
-          ),
-          sliderInput(
-            "min_molecule_count",
-            "Moleculas minimas",
-            value = 10,
-            min = 1,
-            max = 100,
-            step = 1
-          ),
-          sliderInput(
-            "min_vaf",
-            "VAF minima (%)",
-            value = 5,
-            min = 0,
-            max = 100,
-            step = 1,
-            post = "%"
           ),
           tags$hr(),
           tags$h4("Resumen"),
@@ -510,68 +722,86 @@ ui <- fluidPage(
           ),
           fileInput(
             "onco_classified_files",
-            "Archivos Classified_Variants",
+            label = tags$strong("Archivos Classified_Variants"),
             accept = c(".txt", "text/plain"),
             multiple = TRUE
           ),
           fileInput(
             "onco_aneuploidy_files",
-            "Archivos Aneuploidy",
+            label = tags$strong("Archivos Aneuploidy"),
             accept = c(".txt", "text/plain"),
             multiple = TRUE
           ),
           fileInput(
             "onco_bed_file",
-            "Archivo BED de regiones",
+            label = tags$strong("Archivo BED de regiones a buscar"),
             accept = c(".bed"),
             multiple = FALSE
           ),
           tags$hr(),
-          checkboxGroupInput(
-            "onco_classification_filter",
-            "Variantes a incluir",
-            choices = c(
-              "Pathogenic",
-              "Likely pathogenic",
-              "Uncertain significance"
+          fluidRow(
+            class = "filters-row",
+            column(
+              width = 6,
+              checkboxGroupInput(
+                "onco_classification_filter",
+                label = tags$strong("Variantes a incluir"),
+                choices = c(
+                  "Pathogenic",
+                  "Likely pathogenic",
+                  "Uncertain significance"
+                ),
+                selected = c(
+                  "Pathogenic",
+                  "Likely pathogenic",
+                  "Uncertain significance"
+                )
+              )
             ),
-            selected = c(
-              "Pathogenic",
-              "Likely pathogenic",
-              "Uncertain significance"
+            column(
+              width = 6,
+              sliderInput(
+                "onco_min_molecule_count",
+                label = tags$strong("Moléculas mínimas"),
+                value = 10,
+                min = 1,
+                max = 100,
+                step = 1
+              ),
+              sliderInput(
+                "onco_min_vaf",
+                label = tags$strong("VAF mínima (%)"),
+                value = 5,
+                min = 0,
+                max = 100,
+                step = 1,
+                post = "%"
+              )
             )
           ),
-          sliderInput(
-            "onco_min_molecule_count",
-            "Moleculas minimas",
-            value = 10,
-            min = 1,
-            max = 100,
-            step = 1
-          ),
-          sliderInput(
-            "onco_min_vaf",
-            "VAF minima (%)",
-            value = 5,
-            min = 0,
-            max = 100,
-            step = 1,
-            post = "%"
-          ),
           tags$hr(),
-          numericInput(
-            "onco_cnv_padding",
-            "Padding CNV (bp)",
-            value = 500000,
-            min = 0,
-            step = 1000
-          ),
-          numericInput(
-            "onco_sv_padding",
-            "Padding SV (bp)",
-            value = 0,
-            min = 0,
-            step = 1000
+          fluidRow(
+            class = "filters-row",
+            column(
+              width = 6,
+              numericInput(
+                "onco_cnv_padding",
+                label = tags$strong("Padding CNV (bp)"),
+                value = 500000,
+                min = 0,
+                step = 1000
+              )
+            ),
+            column(
+              width = 6,
+              numericInput(
+                "onco_sv_padding",
+                label = tags$strong("Padding SV (bp)"),
+                value = 0,
+                min = 0,
+                step = 1000
+              )
+            )
           ),
           tags$hr(),
           tags$h4("Resumen"),
