@@ -3,6 +3,7 @@ options(shiny.maxRequestSize = 100 * 1024^2)
 suppressPackageStartupMessages({
   library(shiny)
   library(bslib)
+  library(shinycssloaders)
 })
 
 source(file.path("functions", "shiny_data.R"))
@@ -268,12 +269,32 @@ ui <- page_fluid(
         color: var(--bs-border-color);
       }
       .btn-primary {
+        --bs-btn-color: #fff;
         --bs-btn-bg: #007BFF;
         --bs-btn-border-color: #007BFF;
+        --bs-btn-hover-color: #fff;
         --bs-btn-hover-bg: #0069d9;
         --bs-btn-hover-border-color: #0062cc;
+        --bs-btn-active-color: #fff;
         --bs-btn-active-bg: #004085;
         --bs-btn-active-border-color: #004085;
+        color: #fff;
+      }
+      .generate-plot-block {
+        margin: 0.35rem 0 0.5rem;
+      }
+      .generate-plot-block .btn {
+        font-weight: 500;
+      }
+      .filters-accordion {
+        margin: 0.15rem 0 0.35rem;
+      }
+      .filters-accordion .accordion-button {
+        font-weight: 600;
+        padding: 0.55rem 0.85rem;
+      }
+      .filters-accordion .accordion-body {
+        padding: 0.65rem 0.5rem 0.35rem;
       }
       .irs--shiny .irs-single,
       .irs--shiny .irs-from,
@@ -299,6 +320,40 @@ ui <- page_fluid(
       }
       .filters-row .shiny-input-container:last-child {
         margin-bottom: 0;
+      }
+      .plot-panel {
+        position: relative;
+        min-height: 200px;
+      }
+      .plot-panel .shinycssloaders-overlay {
+        background: color-mix(in srgb, var(--bs-body-bg) 88%, transparent);
+        border-radius: 0.5rem;
+      }
+      .plot-panel .load-container {
+        opacity: 1;
+      }
+      .plot-panel .shiny-plot-output img {
+        animation: plot-fade-in 0.45s ease-out;
+      }
+      @keyframes plot-fade-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .plot-panel .shinycssloaders-caption {
+        color: var(--bs-secondary-color);
+        font-size: 0.95rem;
+        margin-top: 0.65rem;
+        font-weight: 500;
+      }
+      .shiny-progress-container .progress-bar {
+        background-color: #007BFF;
+      }
+      .shiny-progress-container .progress-text {
+        color: var(--bs-body-color);
       }
       "
     ))
@@ -351,7 +406,7 @@ ui <- page_fluid(
             tags$h4(tags$strong("Funcionalidades")),
             tags$ul(
               tags$li("CirclePlot por muestra"),
-              tags$li("Oncoprint de cohortes"),
+              tags$li("Oncoprint de varias muestras"),
               tags$li("Filtros de clasificación, moléculas y VAF"),
               tags$li("Exportación PDF, PNG y CSV")
             )
@@ -378,6 +433,15 @@ ui <- page_fluid(
                 target = "_blank",
                 rel = "noreferrer",
                 APP_LICENSE
+              )
+            ),
+            tags$p(
+              tags$strong("Citación: "),
+              tags$a(
+                href = paste0(APP_REPO_URL, "/blob/main/CITATION.cff"),
+                target = "_blank",
+                rel = "noreferrer",
+                "CITATION.cff"
               )
             ),
             tags$p(
@@ -653,49 +717,72 @@ ui <- page_fluid(
             label = tags$strong("Archivo Aneuploidy"),
             accept = c(".txt", "text/plain")
           ),
+          checkboxInput(
+            "show_sample_id_in_plot",
+            label = tags$strong("Incluir el número de muestra en el plot"),
+            value = FALSE
+          ),
           tags$hr(),
-          fluidRow(
-            class = "filters-row",
-            column(
-              width = 6,
-              checkboxGroupInput(
-                "classification_filter",
-                label = tags$strong("Variantes a incluir"),
-                choices = c(
-                  "Pathogenic",
-                  "Likely pathogenic",
-                  "Uncertain significance"
+          accordion(
+            id = "circleplot_filters",
+            class = "filters-accordion",
+            open = FALSE,
+            accordion_panel(
+              title = "Filtros",
+              fluidRow(
+                class = "filters-row",
+                column(
+                  width = 6,
+                  checkboxGroupInput(
+                    "classification_filter",
+                    label = tags$strong("Variantes a incluir"),
+                    choices = c(
+                      "Pathogenic",
+                      "Likely pathogenic",
+                      "Uncertain significance"
+                    ),
+                    selected = c(
+                      "Pathogenic",
+                      "Likely pathogenic",
+                      "Uncertain significance"
+                    )
+                  )
                 ),
-                selected = c(
-                  "Pathogenic",
-                  "Likely pathogenic",
-                  "Uncertain significance"
+                column(
+                  width = 6,
+                  sliderInput(
+                    "min_molecule_count",
+                    label = tags$strong("Moléculas mínimas"),
+                    value = 10,
+                    min = 1,
+                    max = 100,
+                    step = 1
+                  ),
+                  sliderInput(
+                    "min_vaf",
+                    label = tags$strong("VAF mínima (%)"),
+                    value = 5,
+                    min = 0,
+                    max = 100,
+                    step = 1,
+                    post = "%"
+                  )
                 )
-              )
-            ),
-            column(
-              width = 6,
-              sliderInput(
-                "min_molecule_count",
-                label = tags$strong("Moléculas mínimas"),
-                value = 10,
-                min = 1,
-                max = 100,
-                step = 1
-              ),
-              sliderInput(
-                "min_vaf",
-                label = tags$strong("VAF mínima (%)"),
-                value = 5,
-                min = 0,
-                max = 100,
-                step = 1,
-                post = "%"
               )
             )
           ),
           tags$hr(),
-          tags$h4("Resumen"),
+          div(
+            class = "generate-plot-block",
+            actionButton(
+              "generate_circle_plot",
+              "Generar gráfico",
+              class = "btn-primary",
+              width = "100%"
+            )
+          ),
+          tags$hr(),
+          tags$h4(tags$strong("Resumen")),
           tableOutput("summary"),
           tags$hr(),
           downloadButton("download_pdf", "Descargar PDF"),
@@ -704,7 +791,17 @@ ui <- page_fluid(
         ),
         mainPanel(
           uiOutput("status"),
-          plotOutput("circle_plot", height = "760px")
+          div(
+            class = "plot-panel",
+            withSpinner(
+              plotOutput("circle_plot", height = "760px"),
+              type = 8,
+              color = APP_COLOR_PRIMARY,
+              size = 1.2,
+              proxy.height = "760px",
+              caption = "Generando gráfico..."
+            )
+          )
         )
       )
     ),
@@ -739,79 +836,106 @@ ui <- page_fluid(
             multiple = FALSE
           ),
           tags$hr(),
-          fluidRow(
-            class = "filters-row",
-            column(
-              width = 6,
-              checkboxGroupInput(
-                "onco_classification_filter",
-                label = tags$strong("Variantes a incluir"),
-                choices = c(
-                  "Pathogenic",
-                  "Likely pathogenic",
-                  "Uncertain significance"
+          accordion(
+            id = "oncoprint_filters",
+            class = "filters-accordion",
+            open = FALSE,
+            accordion_panel(
+              title = "Filtros",
+              fluidRow(
+                class = "filters-row",
+                column(
+                  width = 6,
+                  checkboxGroupInput(
+                    "onco_classification_filter",
+                    label = tags$strong("Variantes a incluir"),
+                    choices = c(
+                      "Pathogenic",
+                      "Likely pathogenic",
+                      "Uncertain significance"
+                    ),
+                    selected = c(
+                      "Pathogenic",
+                      "Likely pathogenic",
+                      "Uncertain significance"
+                    )
+                  )
                 ),
-                selected = c(
-                  "Pathogenic",
-                  "Likely pathogenic",
-                  "Uncertain significance"
+                column(
+                  width = 6,
+                  sliderInput(
+                    "onco_min_molecule_count",
+                    label = tags$strong("Moléculas mínimas"),
+                    value = 10,
+                    min = 1,
+                    max = 100,
+                    step = 1
+                  ),
+                  sliderInput(
+                    "onco_min_vaf",
+                    label = tags$strong("VAF mínima (%)"),
+                    value = 5,
+                    min = 0,
+                    max = 100,
+                    step = 1,
+                    post = "%"
+                  )
+                )
+              ),
+              fluidRow(
+                class = "filters-row",
+                column(
+                  width = 6,
+                  numericInput(
+                    "onco_cnv_padding",
+                    label = tags$strong("Padding CNV (bp)"),
+                    value = 500000,
+                    min = 0,
+                    step = 1000
+                  )
+                ),
+                column(
+                  width = 6,
+                  numericInput(
+                    "onco_sv_padding",
+                    label = tags$strong("Padding SV (bp)"),
+                    value = 0,
+                    min = 0,
+                    step = 1000
+                  )
                 )
               )
-            ),
-            column(
-              width = 6,
-              sliderInput(
-                "onco_min_molecule_count",
-                label = tags$strong("Moléculas mínimas"),
-                value = 10,
-                min = 1,
-                max = 100,
-                step = 1
-              ),
-              sliderInput(
-                "onco_min_vaf",
-                label = tags$strong("VAF mínima (%)"),
-                value = 5,
-                min = 0,
-                max = 100,
-                step = 1,
-                post = "%"
-              )
             )
           ),
           tags$hr(),
-          fluidRow(
-            class = "filters-row",
-            column(
-              width = 6,
-              numericInput(
-                "onco_cnv_padding",
-                label = tags$strong("Padding CNV (bp)"),
-                value = 500000,
-                min = 0,
-                step = 1000
-              )
-            ),
-            column(
-              width = 6,
-              numericInput(
-                "onco_sv_padding",
-                label = tags$strong("Padding SV (bp)"),
-                value = 0,
-                min = 0,
-                step = 1000
-              )
+          div(
+            class = "generate-plot-block",
+            actionButton(
+              "generate_onco_plot",
+              "Generar gráfico",
+              class = "btn-primary",
+              width = "100%"
             )
           ),
           tags$hr(),
-          tags$h4("Resumen"),
+          tags$h4(tags$strong("Resumen")),
           tableOutput("onco_summary"),
           tags$hr(),
           downloadButton("onco_download_pdf", "Descargar PDF")
         ),
         mainPanel(
           uiOutput("onco_status"),
-          plotOutput("onco_plot", height = "900px")
+          div(
+            class = "plot-panel",
+            withSpinner(
+              plotOutput("onco_plot", height = "900px"),
+              type = 8,
+              color = APP_COLOR_PRIMARY,
+              size = 1.2,
+              proxy.height = "900px",
+              caption = "Generando gráfico..."
+            )
+          )
         )
       )
     )
@@ -831,7 +955,7 @@ server <- function(input, output, session) {
     }
   )
 
-  processed_case <- reactive({
+  processed_case <- eventReactive(input$generate_circle_plot, {
     req(input$classified_file, input$aneuploidy_file)
 
     tryCatch(
@@ -848,14 +972,25 @@ server <- function(input, output, session) {
         list(error = conditionMessage(error))
       }
     )
-  })
+  }, ignoreNULL = TRUE)
 
   output$status <- renderUI({
+    input$generate_circle_plot
+
     if (is.null(input$classified_file) || is.null(input$aneuploidy_file)) {
       return(
         div(
           class = "status-box status-info",
-          "Sube los dos archivos para generar el circle plot."
+          "Sube los dos archivos y pulsa «Generar gráfico»."
+        )
+      )
+    }
+
+    if (is.null(input$generate_circle_plot) || input$generate_circle_plot == 0) {
+      return(
+        div(
+          class = "status-box status-info",
+          "Archivos listos. Ajusta los filtros y pulsa «Generar gráfico»."
         )
       )
     }
@@ -876,30 +1011,42 @@ server <- function(input, output, session) {
       class = "status-box status-ok",
       strong("Muestra validada: "),
       case$id,
-      ". El gráfico se ha generado con los filtros del workflow."
+      ". El gráfico se ha generado con los filtros actuales."
     )
   })
 
   output$circle_plot <- renderPlot(
     {
-      if (is.null(input$classified_file) || is.null(input$aneuploidy_file)) {
-        validate(need(FALSE, "Sube los dos archivos para generar el circle plot."))
-      }
+      req(processed_case())
 
-      case <- processed_case()
-      validate(need(is_processed_case(case), case$error))
+      withProgress(
+        message = "Generando gráfico...",
+        min = 0,
+        max = 1,
+        value = 0,
+        {
+          incProgress(0.1, detail = "Comprobando archivos")
+          case <- processed_case()
+          validate(need(is_processed_case(case), case$error))
 
-      circleplot(case$id, case$dbase)
+          incProgress(0.45, detail = "Dibujando circleplot")
+          circleplot(
+            case$id,
+            case$dbase,
+            show_sample_id = isTRUE(input$show_sample_id_in_plot)
+          )
+          incProgress(0.45, detail = "Finalizando")
+        }
+      )
     },
     res = 96
   )
 
   output$summary <- renderTable({
-    if (is.null(input$classified_file) || is.null(input$aneuploidy_file)) {
+    case <- processed_case()
+    if (is.null(case)) {
       return(NULL)
     }
-
-    case <- processed_case()
     validate(need(is_processed_case(case), case$error))
 
     summarise_circleplot_case(case)
@@ -917,7 +1064,11 @@ server <- function(input, output, session) {
 
       pdf(file, width = 9, height = 9)
       on.exit(dev.off(), add = TRUE)
-      circleplot(case$id, case$dbase)
+      circleplot(
+        case$id,
+        case$dbase,
+        show_sample_id = isTRUE(input$show_sample_id_in_plot)
+      )
     }
   )
 
@@ -933,7 +1084,11 @@ server <- function(input, output, session) {
 
       png(file, width = 2400, height = 2400, res = 300)
       on.exit(dev.off(), add = TRUE)
-      circleplot(case$id, case$dbase)
+      circleplot(
+        case$id,
+        case$dbase,
+        show_sample_id = isTRUE(input$show_sample_id_in_plot)
+      )
     }
   )
 
@@ -951,7 +1106,7 @@ server <- function(input, output, session) {
     }
   )
 
-  processed_oncoprint <- reactive({
+  processed_oncoprint <- eventReactive(input$generate_onco_plot, {
     req(
       input$onco_classified_files,
       input$onco_aneuploidy_files,
@@ -975,9 +1130,11 @@ server <- function(input, output, session) {
         list(error = conditionMessage(error))
       }
     )
-  })
+  }, ignoreNULL = TRUE)
 
   output$onco_status <- renderUI({
+    input$generate_onco_plot
+
     if (
       is.null(input$onco_classified_files) ||
         is.null(input$onco_aneuploidy_files) ||
@@ -986,7 +1143,16 @@ server <- function(input, output, session) {
       return(
         div(
           class = "status-box status-info",
-          "Sube los archivos Classified_Variants, Aneuploidy y el archivo .bed para generar el oncoprint."
+          "Sube los archivos necesarios y pulsa «Generar gráfico»."
+        )
+      )
+    }
+
+    if (is.null(input$generate_onco_plot) || input$generate_onco_plot == 0) {
+      return(
+        div(
+          class = "status-box status-info",
+          "Archivos listos. Ajusta los filtros y pulsa «Generar gráfico»."
         )
       )
     }
@@ -1017,36 +1183,36 @@ server <- function(input, output, session) {
 
   output$onco_plot <- renderPlot(
     {
-      if (
-        is.null(input$onco_classified_files) ||
-          is.null(input$onco_aneuploidy_files) ||
-          is.null(input$onco_bed_file)
-      ) {
-        validate(need(FALSE, "Sube los archivos necesarios para generar el oncoprint."))
-      }
+      req(processed_oncoprint())
 
-      cohort <- processed_oncoprint()
-      validate(need(is_processed_oncoprint(cohort), cohort$error))
+      withProgress(
+        message = "Generando gráfico...",
+        min = 0,
+        max = 1,
+        value = 0,
+        {
+          incProgress(0.1, detail = "Comprobando archivos")
+          cohort <- processed_oncoprint()
+          validate(need(is_processed_oncoprint(cohort), cohort$error))
 
-      draw_oncoprint_detailed(
-        cohort$complete_matrix,
-        cohort$annotation_data,
-        n_patients = cohort$n_patients
+          incProgress(0.45, detail = "Dibujando oncoprint")
+          draw_oncoprint_detailed(
+            cohort$complete_matrix,
+            cohort$annotation_data,
+            n_patients = cohort$n_patients
+          )
+          incProgress(0.45, detail = "Finalizando")
+        }
       )
     },
     res = 96
   )
 
   output$onco_summary <- renderTable({
-    if (
-      is.null(input$onco_classified_files) ||
-        is.null(input$onco_aneuploidy_files) ||
-        is.null(input$onco_bed_file)
-    ) {
+    cohort <- processed_oncoprint()
+    if (is.null(cohort)) {
       return(NULL)
     }
-
-    cohort <- processed_oncoprint()
     validate(need(is_processed_oncoprint(cohort), cohort$error))
 
     summarise_oncoprint_cohort(cohort)

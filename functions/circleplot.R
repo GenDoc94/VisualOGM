@@ -6,7 +6,7 @@ suppressPackageStartupMessages({
         library(tidyverse)
 })
 
-circleplot <- function(id_pac, dbase) {
+circleplot <- function(id_pac, dbase, show_sample_id = FALSE) {
         #Selecting patient
         case_row <- dbase |> select(Id, data) |> filter(Id == id_pac)
         if (nrow(case_row) == 0) {
@@ -111,6 +111,9 @@ circleplot <- function(id_pac, dbase) {
         #Starting the graph
         circos.clear()
         on.exit(circos.clear(), add = TRUE)
+        if (isTRUE(show_sample_id)) {
+                graphics::par(oma = graphics::par("oma") + c(0, 0, 1.3, 0))
+        }
         circos.par(start.degree = 90)
         if (exists("cytobands", inherits = TRUE)) {
                 circos.initializeWithIdeogram(
@@ -252,6 +255,16 @@ circleplot <- function(id_pac, dbase) {
                         col = "#eb008b", lwd = 1.5
                 )
         }
-        
-   
+
+        if (isTRUE(show_sample_id)) {
+                graphics::title(
+                        main = id_pac,
+                        outer = TRUE,
+                        adj = 0.5,
+                        line = -0.6,
+                        cex.main = 1.75,
+                        col.main = "#004085",
+                        font.main = 2
+                )
+        }
 }

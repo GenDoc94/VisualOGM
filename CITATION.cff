@@ -5,9 +5,23 @@ message: >-
 type: software
 authors:
   - family-names: GenDoc94
-    affiliation: Independent
+    orcid: https://orcid.org/0000-0001-6210-1294
+    affiliation: >-
+      Hospital Universitario Marqués de Valdecilla, Santander, Cantabria, Spain
 repository-code: https://github.com/GenDoc94/VisualOGM
 url: https://github.com/GenDoc94/VisualOGM
 license: MIT
 version: 1.0.0
 date-released: 2026-05-27
+preferred-citation:
+  type: software
+  title: VisualOGM
+  authors:
+    - family-names: GenDoc94
+      orcid: https://orcid.org/0000-0001-6210-1294
+      affiliation: >-
+        Hospital Universitario Marqués de Valdecilla, Santander, Cantabria, Spain
+  version: 1.0.0
+  year: 2026
+  url: https://github.com/GenDoc94/VisualOGM
+  license: MIT

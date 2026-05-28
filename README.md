@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Aplicación **Shiny** para visualizar resultados de **Bionano OGM**: circle plots por muestra y oncoprints de cohortes a partir de los archivos exportados por la plataforma de análisis.
+Aplicación **Shiny** para visualizar resultados de **Bionano OGM**: circle plots por muestra y oncoprints de varias muestras a partir de los archivos exportados por la plataforma de análisis.
 
 Repositorio: [github.com/GenDoc94/VisualOGM](https://github.com/GenDoc94/VisualOGM)
 
@@ -18,11 +18,11 @@ La pestaña **Información** de la app incluye capturas de cómo descargar los f
 ## Requisitos
 
 - R >= 4.1 recomendado
-- Paquetes CRAN: `shiny`, `bslib`, `tidyverse`, `circlize`, `readr`
+- Paquetes CRAN: `shiny`, `bslib`, `shinycssloaders`, `tidyverse`, `circlize`, `readr`
 - Paquete Bioconductor: `ComplexHeatmap`
 
 ```r
-install.packages(c("shiny", "bslib", "tidyverse", "circlize", "readr"))
+install.packages(c("shiny", "bslib", "shinycssloaders", "tidyverse", "circlize", "readr"))
 
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
@@ -79,7 +79,7 @@ Este proyecto está bajo licencia **MIT** — ver [LICENSE](LICENSE).
 
 Si usas VisualOGM en un trabajo, cita el repositorio (también disponible en [CITATION.cff](CITATION.cff)):
 
-> GenDoc94 (2026). *VisualOGM* (v1.0.0). https://github.com/GenDoc94/VisualOGM
+> GenDoc94 (2026). *VisualOGM* (v1.0.0) [software]. Hospital Universitario Marqués de Valdecilla, Santander, Spain. https://github.com/GenDoc94/VisualOGM
 
 ## Contribuir
 
