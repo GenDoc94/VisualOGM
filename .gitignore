@@ -1,12 +1,8 @@
 examples_files/
-files/
-bases/
-graphs/
+scripts/
 workflow_data.rds
 *.rds
 *.RData
 *.Rhistory
 .Rproj.user/
 rsconnect/
-*.bed
-!www/filter_example.bed
