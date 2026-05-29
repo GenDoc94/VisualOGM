@@ -5,6 +5,8 @@
 
 Aplicación **Shiny** para visualizar resultados de **Bionano™**: circle plots por muestra y oncoprints de varias muestras a partir de los archivos exportados por **Bionano Access™**.
 
+**Demo en línea:** [gendoc.shinyapps.io/VisualOGM](https://gendoc.shinyapps.io/VisualOGM/)
+
 Repositorio: [github.com/GenDoc94/VisualOGM](https://github.com/GenDoc94/VisualOGM)
 
 ## Funcionalidades
@@ -61,11 +63,13 @@ Los nombres de Classified_Variants y Aneuploidy de un mismo caso deben compartir
 - `functions/` — lectura, validación y gráficos
 - `www/` — logo y capturas de la pestaña Información
 
-## Publicada en internet
+## Demo en línea
 
-Para compartir la app sin que cada usuario instale R:
+Puedes usar VisualOGM sin instalar R en:
 
-- [PENDIENTE DE AÑADIR URL](https://www.shinyapps.io/)
+**https://gendoc.shinyapps.io/VisualOGM/**
+
+Los archivos que subas se procesan en los servidores de [shinyapps.io](https://www.shinyapps.io/). No uses datos clínicos identificables sin revisar la política de privacidad del servicio. Para que todo quede en tu equipo, usa la [instalación local](#instalación-y-uso-local).
 
 ## Aviso legal / uso clínico
 

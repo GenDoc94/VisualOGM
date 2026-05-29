@@ -20,9 +20,9 @@ is_processed_oncoprint <- function(x) {
 }
 
 APP_NAME <- "VisualOGM"
-APP_VERSION <- "1.0.0-beta.1"
+APP_VERSION <- "1.0.0"
 APP_REPO_URL <- "https://github.com/GenDoc94/VisualOGM"
-APP_DOI <- "10.5281/zenodo.20441643"
+APP_DEMO_URL <- "https://gendoc.shinyapps.io/VisualOGM/"
 APP_LICENSE <- "MIT"
 APP_COLOR_PRIMARY <- "#007BFF"
 APP_COLOR_DARK <- "#004085"
@@ -433,6 +433,15 @@ ui <- page_fluid(
           div(
             class = "info-sidebar-links",
             tags$p(
+              tags$strong("Demo: "),
+              tags$a(
+                href = APP_DEMO_URL,
+                target = "_blank",
+                rel = "noreferrer",
+                "shinyapps.io/VisualOGM"
+              )
+            ),
+            tags$p(
               tags$strong("Repositorio: "),
               tags$a(href = APP_REPO_URL, target = "_blank", rel = "noreferrer", "GitHub")
             ),
@@ -452,15 +461,6 @@ ui <- page_fluid(
                 target = "_blank",
                 rel = "noreferrer",
                 "CITATION.cff"
-              )
-            ),
-            tags$p(
-              tags$strong("DOI: "),
-              tags$a(
-                href = paste0("https://doi.org/", APP_DOI),
-                target = "_blank",
-                rel = "noreferrer",
-                APP_DOI
               )
             ),
             tags$p(
