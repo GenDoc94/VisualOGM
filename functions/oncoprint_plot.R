@@ -147,12 +147,33 @@ draw_oncoprint_detailed <- function(
     niveles_ploidia
   )
 
+  chr_values <- annotation_data$TotalChr_Stimated
+  chr_max <- max(chr_values, na.rm = TRUE)
+  chr_min <- min(chr_values, na.rm = TRUE)
+  chr_ylim <- c(
+    max(0, floor(chr_min) - 2),
+    ceiling(chr_max) + 2
+  )
+
   anno_inferior <- HeatmapAnnotation(
+    `Nº cromosomas` = anno_barplot(
+      chr_values,
+      ylim = chr_ylim,
+      gp = gpar(fill = "#6BAED6", col = NA),
+      border = FALSE,
+      bar_width = 0.65,
+      axis = TRUE,
+      height = unit(2.6, "cm"),
+      add_numbers = TRUE,
+      numbers_gp = gpar(fontsize = 8, fontface = "bold", col = "white"),
+      numbers_rot = 0,
+      numbers_offset = unit(-5, "mm")
+    ),
     Ploidia = annotation_data$Ploidy,
-    Total_Chr = anno_barplot(annotation_data$TotalChr_Stimated),
     col = list(Ploidia = colores_ploidia),
+    gap = unit(2, "mm"),
     annotation_legend_param = list(
-      Ploidia = list(direction = "horizontal", nrow = 1)
+      Ploidia = list(direction = "horizontal", nrow = 2)
     )
   )
 
@@ -181,10 +202,24 @@ draw_oncoprint_detailed <- function(
     )
   )
 
+  prev_ht_opt <- list(
+    legend_gap = ht_opt("legend_gap"),
+    HEATMAP_LEGEND_PADDING = ht_opt("HEATMAP_LEGEND_PADDING"),
+    ANNOTATION_LEGEND_PADDING = ht_opt("ANNOTATION_LEGEND_PADDING")
+  )
+  on.exit(do.call(ht_opt, prev_ht_opt), add = TRUE)
+  ht_opt(
+    legend_gap = unit(5, "mm"),
+    HEATMAP_LEGEND_PADDING = unit(c(4, 8, 4, 8), "mm"),
+    ANNOTATION_LEGEND_PADDING = unit(c(4, 8, 4, 8), "mm")
+  )
+
   draw(
     p,
     heatmap_legend_side = "bottom",
-    annotation_legend_side = "bottom"
+    annotation_legend_side = "bottom",
+    merge_legends = TRUE,
+    padding = unit(c(4, 8, 36, 4), "mm")
   )
 
   invisible(p)

@@ -200,6 +200,14 @@ ui <- page_fluid(
         gap: 1.5rem;
         margin: 1rem 0 1.5rem;
       }
+      .info-screenshots--centered {
+        justify-content: center;
+      }
+      .info-screenshots--centered .info-screenshot--compact img {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+      }
       .info-screenshot {
         flex: 1 1 18rem;
         max-width: 100%;
@@ -232,6 +240,7 @@ ui <- page_fluid(
       }
       .info-bed-download {
         margin: 1rem 0 1.25rem;
+        text-align: center;
       }
       .info-bed-table {
         font-size: 0.95rem;
@@ -403,7 +412,7 @@ ui <- page_fluid(
           tags$hr(),
           div(
             class = "info-sidebar-section",
-            tags$h4(tags$strong("Funcionalidades")),
+            tags$h4(tags$strong("Funcionalidades de la versión")),
             tags$ul(
               tags$li("CirclePlot por muestra"),
               tags$li("Oncoprint de varias muestras"),
@@ -446,7 +455,14 @@ ui <- page_fluid(
             ),
             tags$p(
               tags$strong("Datos: "),
-              "en uso local, los archivos se procesan en tu equipo."
+              "Uso local, los archivos se procesan en tu equipo. No se transmiten en la nube."
+            ),
+            tags$p(
+              tags$strong("Contacto: "),
+              tags$a(
+                href = "mailto:juanjose.dominguez@scsalud.es",
+                "juanjose.dominguez@scsalud.es"
+              )
             )
           ),
           div(
@@ -482,15 +498,36 @@ ui <- page_fluid(
           tags$code("XXX_Classified_Variants_.txt"),
           " y los archivos de aneuploidías ",
           tags$code("XXX_Aneuploidy.txt"),
-          " de vuestras muestras de Bionano que hayáis descargado, y poder hacer ",
-          strong("circleplots personalizados"),
-          " y vuestros propios ",
-          strong("oncoprints"),
+          " de vuestras muestras de Bionano Access\u2122 que hayáis descargado, y poder hacer vuestros propios ",
+          strong("circleplots"),
+          " y ",
+          strong("oncoprints personalizados"),
           "."
+        ),
+        h4("Ejemplos de gráficos generados"),
+        p("Así pueden verse un circleplot y un oncoprint generados con la aplicación:"),
+        div(
+          class = "info-screenshots",
+          tags$figure(
+            class = "info-screenshot",
+            tags$img(
+              src = "circleplot_example.png",
+              alt = "Ejemplo de circleplot generado con VisualOGM"
+            ),
+            tags$figcaption("Ejemplo de circleplot")
+          ),
+          tags$figure(
+            class = "info-screenshot",
+            tags$img(
+              src = "oncoprint_example.png",
+              alt = "Ejemplo de oncoprint generado con VisualOGM"
+            ),
+            tags$figcaption("Ejemplo de oncoprint")
+          )
         ),
         h4("Descarga de archivos desde OGM"),
         p(
-          "Para descargar los archivos necesarios de OGM, hacerlo a través de la plataforma de análisis ",
+          "Para descargar los archivos necesarios de Bionano Access\u2122, hacerlo a través de la plataforma de análisis ",
           "en el botón de ",
           strong("descargar"),
           "."
@@ -506,14 +543,14 @@ ui <- page_fluid(
             "se recomienda descargarlos tal cual, para que se descarguen todas las aneuploidías."
           )
         ),
-        h4("Capturas de la plataforma"),
         p(
-          "Para descargar los ficheros desde la plataforma, pulsa el botón ",
+          "Para descargar los ficheros desde la plataforma, entrad en la muestra en concreto, ",
+          "y en la barra de arriba pulsad el botón ",
           strong("Download"),
           ":"
         ),
         div(
-          class = "info-screenshots",
+          class = "info-screenshots info-screenshots--centered",
           tags$figure(
             class = "info-screenshot info-screenshot--compact",
             tags$img(
@@ -633,6 +670,14 @@ ui <- page_fluid(
           "La primera fila del ejemplo tiene el formato habitual de cabecera BED, por ejemplo: ",
           tags$code('track db="hg38" name="filter_example" description="..."')
         ),
+        div(
+          class = "info-bed-download",
+          downloadButton(
+            "download_bed_example",
+            "Descargar plantilla .bed",
+            class = "btn-primary"
+          )
+        ),
         h4("Padding CNV y SV (solapamiento)"),
         p(
           "En la pestaña ",
@@ -641,7 +686,7 @@ ui <- page_fluid(
           tags$strong("Padding CNV (bp)"),
           " y ",
           tags$strong("Padding SV (bp)"),
-          " no amplían la región del BED en el fichero: definen el ",
+          " definen el ",
           strong("solapamiento"),
           " que estás dispuesto a aceptar para considerar que una variante estructural ",
           strong('"toca"'),
@@ -654,7 +699,7 @@ ui <- page_fluid(
           tags$strong("padding CNV"),
           " se aplica a ganancias y pérdidas (CNV); el ",
           tags$strong("padding SV"),
-          ", al resto de variantes estructurales (deleciones puntuales, inversiones, ",
+          ", al resto de variantes estructurales (deleciones, inversiones, ",
           "translocaciones, etc.)."
         ),
         p(
@@ -679,19 +724,12 @@ ui <- page_fluid(
           " (valor por defecto), las SV deben solaparse con la región del BED sin margen ",
           "extra; puedes subirlo si quieres ser más permisivo con breakpoints cercanos."
         ),
-        div(
-          class = "info-bed-download",
-          downloadButton(
-            "download_bed_example",
-            "Descargar filter_example.bed (plantilla)",
-            class = "btn-primary"
-          )
-        ),
+        tags$hr(),
         tags$p(
           class = "app-note",
           em(
             "Herramienta de apoyo a la investigación. No sustituye la interpretación clínica ",
-            "ni la validación en la plataforma Bionano Access."
+            "ni la validación en la plataforma Bionano Access\u2122."
           )
         )
           )
@@ -921,14 +959,15 @@ ui <- page_fluid(
           tags$h4(tags$strong("Resumen")),
           tableOutput("onco_summary"),
           tags$hr(),
-          downloadButton("onco_download_pdf", "Descargar PDF")
+          downloadButton("onco_download_pdf", "Descargar PDF"),
+          downloadButton("onco_download_png", "Descargar PNG")
         ),
         mainPanel(
           uiOutput("onco_status"),
           div(
             class = "plot-panel",
             withSpinner(
-              plotOutput("onco_plot", height = "900px"),
+              plotOutput("onco_plot", height = "1000px"),
               type = 8,
               color = APP_COLOR_PRIMARY,
               size = 1.2,
@@ -1227,6 +1266,24 @@ server <- function(input, output, session) {
       req(is_processed_oncoprint(cohort))
 
       pdf(file, width = 14, height = 10)
+      on.exit(dev.off(), add = TRUE)
+      draw_oncoprint_detailed(
+        cohort$complete_matrix,
+        cohort$annotation_data,
+        n_patients = cohort$n_patients
+      )
+    }
+  )
+
+  output$onco_download_png <- downloadHandler(
+    filename = function() {
+      "oncoprint_ogm_detallado.png"
+    },
+    content = function(file) {
+      cohort <- processed_oncoprint()
+      req(is_processed_oncoprint(cohort))
+
+      png(file, width = 4200, height = 3000, res = 300)
       on.exit(dev.off(), add = TRUE)
       draw_oncoprint_detailed(
         cohort$complete_matrix,

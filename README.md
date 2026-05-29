@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Aplicación **Shiny** para visualizar resultados de **Bionano OGM**: circle plots por muestra y oncoprints de varias muestras a partir de los archivos exportados por la plataforma de análisis.
+Aplicación **Shiny** para visualizar resultados de **Bionano™ OGM**: circle plots por muestra y oncoprints de varias muestras a partir de los archivos exportados por **Bionano Access™**.
 
 Repositorio: [github.com/GenDoc94/VisualOGM](https://github.com/GenDoc94/VisualOGM)
 
@@ -13,7 +13,7 @@ Repositorio: [github.com/GenDoc94/VisualOGM](https://github.com/GenDoc94/VisualO
 - Filtros por clasificación ACMG, número de moléculas y VAF.
 - Exportación a PDF, PNG (CirclePlot) y CSV de variantes filtradas.
 
-La pestaña **Información** de la app incluye capturas de cómo descargar los ficheros desde OGM.
+La pestaña **Información** de la app incluye capturas de cómo descargar los ficheros desde **Bionano Access™**.
 
 ## Requisitos
 
@@ -69,7 +69,7 @@ En despliegues públicos, indica claramente quién opera el servidor y cómo se 
 
 ## Aviso legal / uso clínico
 
-VisualOGM es una **herramienta de apoyo a la investigación y la visualización**. No sustituye la interpretación clínica, la validación en la plataforma OGM ni ningún sistema diagnóstico certificado. El usuario es responsable del uso que haga de los resultados.
+VisualOGM es una **herramienta de apoyo a la investigación y la visualización**. No sustituye la interpretación clínica, la validación en **Bionano Access™** ni ningún sistema diagnóstico certificado. El usuario es responsable del uso que haga de los resultados.
 
 ## Licencia
 

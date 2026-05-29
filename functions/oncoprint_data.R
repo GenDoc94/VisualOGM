@@ -34,6 +34,15 @@ classify_variant_type_for_gene_region <- function(type_value) {
   )
 }
 
+oncoprint_ploidy_labels <- function() {
+  c(
+    "Hiperhaploide (24-34)",
+    "No hiperdiploide (35-45)",
+    "Diploide (46)",
+    "Hiperdiploide (\u226547)"
+  )
+}
+
 oncoprint_padding_for_type <- function(f_type, cnv_overlap, sv_overlap) {
   if (f_type %in% c(0L, 2L, 6L)) {
     return(cnv_overlap)
@@ -486,12 +495,7 @@ build_oncoprint_annotations <- function(complete_matrix, cohort_base) {
       Ploidy = factor(
         Ploidy,
         levels = c(1, 2, 3, 4),
-        labels = c(
-          "Hiperhaploide",
-          "No hiperdiploide",
-          "Diploide",
-          "Hiperdiploide"
-        )
+        labels = oncoprint_ploidy_labels()
       )
     )
 }

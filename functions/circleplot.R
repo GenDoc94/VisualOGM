@@ -1,4 +1,4 @@
-#Code to generate the circleplot similar to Bionano
+#Code to generate the circleplot similar to Bionano™
 suppressPackageStartupMessages({
         library(circlize)
         library(purrr)
