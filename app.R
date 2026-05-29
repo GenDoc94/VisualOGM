@@ -465,7 +465,16 @@ ui <- page_fluid(
             ),
             tags$p(
               tags$strong("Datos: "),
-              "Uso local, los archivos se procesan en tu equipo. No se transmiten en la nube."
+              "En la ",
+              tags$a(
+                href = APP_DEMO_URL,
+                target = "_blank",
+                rel = "noreferrer",
+                "demo web"
+              ),
+              ", los archivos se suben a servidores de shinyapps.io. ",
+              "No subas datos clínicos identificables. ",
+              "En uso local (R), todo se procesa en tu equipo."
             ),
             tags$p(
               tags$strong("Contacto: "),
@@ -733,6 +742,35 @@ ui <- page_fluid(
           tags$code("0"),
           " (valor por defecto), las SV deben solaparse con la región del BED sin margen ",
           "extra; puedes subirlo si quieres ser más permisivo con breakpoints cercanos."
+        ),
+        h4("Privacidad de los datos"),
+        p(
+          "Si ejecutas VisualOGM en tu ordenador con ",
+          tags$code("shiny::runApp()"),
+          ", los ficheros que subas ",
+          strong("no salen de tu equipo"),
+          ": se leen y procesan en local."
+        ),
+        p(
+          "Si usas la ",
+          tags$a(
+            href = APP_DEMO_URL,
+            target = "_blank",
+            rel = "noreferrer",
+            "demo en shinyapps.io"
+          ),
+          ", los archivos ",
+          strong("sí se envían"),
+          " a los servidores de Posit/shinyapps.io para generar los gráficos. ",
+          "No uses datos de pacientes identificables ni información sensible; ",
+          "revisa la ",
+          tags$a(
+            href = "https://www.shinyapps.io/privacy/",
+            target = "_blank",
+            rel = "noreferrer",
+            "política de privacidad de shinyapps.io"
+          ),
+          ". Para máxima confidencialidad, instala y usa la app en local."
         ),
         tags$hr(),
         tags$p(
