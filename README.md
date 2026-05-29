@@ -1,8 +1,8 @@
 # VisualOGM
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[License: MIT](https://opensource.org/licenses/MIT)
 
-Aplicación **Shiny** para visualizar resultados de **Bionano™ OGM**: circle plots por muestra y oncoprints de varias muestras a partir de los archivos exportados por **Bionano Access™**.
+Aplicación **Shiny** para visualizar resultados de **Bionano™**: circle plots por muestra y oncoprints de varias muestras a partir de los archivos exportados por **Bionano Access™**.
 
 Repositorio: [github.com/GenDoc94/VisualOGM](https://github.com/GenDoc94/VisualOGM)
 
@@ -44,11 +44,13 @@ Sube los archivos desde la interfaz. En ejecución local, los datos se procesan 
 
 ## Archivos de entrada
 
-| Archivo | Uso |
-|---------|-----|
-| `*_Classified_Variants*.txt` | Variantes estructurales clasificadas |
-| `*_Aneuploidy.txt` | Aneuploidías |
-| `*.bed` | Regiones para Oncoprint (`chrom`, `start`, `end`, `name`) |
+
+| Archivo                      | Uso                                                       |
+| ---------------------------- | --------------------------------------------------------- |
+| `*_Classified_Variants*.txt` | Variantes estructurales clasificadas                      |
+| `*_Aneuploidy.txt`           | Aneuploidías                                              |
+| `*.bed`                      | Regiones para Oncoprint (`chrom`, `start`, `end`, `name`) |
+
 
 Los nombres de Classified_Variants y Aneuploidy de un mismo caso deben compartir el mismo identificador de muestra al inicio del nombre.
 
@@ -58,14 +60,11 @@ Los nombres de Classified_Variants y Aneuploidy de un mismo caso deben compartir
 - `functions/` — lectura, validación y gráficos
 - `www/` — logo y capturas de la pestaña Información
 
-## Publicar en internet (opcional)
+## Publicada en internet
 
 Para compartir la app sin que cada usuario instale R:
 
-- [shinyapps.io](https://www.shinyapps.io/) — despliegue sencillo; revisa su política de privacidad si subes datos reales.
-- Posit Connect, Shiny Server o Docker con tu propio servidor.
-
-En despliegues públicos, indica claramente quién opera el servidor y cómo se tratan los datos clínicos.
+- [PENDIENTE DE AÑADIR URL](https://www.shinyapps.io/)
 
 ## Aviso legal / uso clínico
 
@@ -79,7 +78,7 @@ Este proyecto está bajo licencia **MIT** — ver [LICENSE](LICENSE).
 
 Si usas VisualOGM en un trabajo, cita el repositorio (también disponible en [CITATION.cff](CITATION.cff)):
 
-> GenDoc94 (2026). *VisualOGM* (v1.0.0) [software]. Hospital Universitario Marqués de Valdecilla, Santander, Spain. https://github.com/GenDoc94/VisualOGM
+> GenDoc94 (2026). *VisualOGM* (v1.0.0-beta.1) [software]. Hospital Universitario Marqués de Valdecilla, Santander, Spain. [https://github.com/GenDoc94/VisualOGM](https://github.com/GenDoc94/VisualOGM)
 
 ## Contribuir
 

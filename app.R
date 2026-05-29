@@ -20,7 +20,7 @@ is_processed_oncoprint <- function(x) {
 }
 
 APP_NAME <- "VisualOGM"
-APP_VERSION <- "1.0.0"
+APP_VERSION <- "1.0.0-beta.1"
 APP_REPO_URL <- "https://github.com/GenDoc94/VisualOGM"
 APP_LICENSE <- "MIT"
 APP_COLOR_PRIMARY <- "#007BFF"
