@@ -1,6 +1,7 @@
 # VisualOGM
 
-[License: MIT](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20441643.svg)](https://doi.org/10.5281/zenodo.20441643)
 
 Aplicación **Shiny** para visualizar resultados de **Bionano™**: circle plots por muestra y oncoprints de varias muestras a partir de los archivos exportados por **Bionano Access™**.
 
@@ -76,9 +77,9 @@ Este proyecto está bajo licencia **MIT** — ver [LICENSE](LICENSE).
 
 ## Cómo citar
 
-Si usas VisualOGM en un trabajo, cita el repositorio (también disponible en [CITATION.cff](CITATION.cff)):
+Si usas VisualOGM en un trabajo, cita el repositorio o el DOI (también en [CITATION.cff](CITATION.cff)):
 
-> GenDoc94 (2026). *VisualOGM* (v1.0.0-beta.1) [software]. Hospital Universitario Marqués de Valdecilla, Santander, Spain. [https://github.com/GenDoc94/VisualOGM](https://github.com/GenDoc94/VisualOGM)
+> GenDoc94 (2026). *VisualOGM* (v1.0.0-beta.1) [software]. Hospital Universitario Marqués de Valdecilla, Santander, Spain. https://github.com/GenDoc94/VisualOGM — https://doi.org/10.5281/zenodo.20441643
 
 ## Contribuir
 

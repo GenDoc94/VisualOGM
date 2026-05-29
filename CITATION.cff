@@ -10,6 +10,7 @@ authors:
       Hospital Universitario Marqués de Valdecilla, Santander, Cantabria, Spain
 repository-code: https://github.com/GenDoc94/VisualOGM
 url: https://github.com/GenDoc94/VisualOGM
+doi: 10.5281/zenodo.20441643
 license: MIT
 version: 1.0.0-beta.1
 date-released: 2026-05-27
@@ -23,5 +24,6 @@ preferred-citation:
         Hospital Universitario Marqués de Valdecilla, Santander, Cantabria, Spain
   version: 1.0.0-beta.1
   year: 2026
+  doi: 10.5281/zenodo.20441643
   url: https://github.com/GenDoc94/VisualOGM
   license: MIT
