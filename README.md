@@ -2,12 +2,15 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20441643.svg)](https://doi.org/10.5281/zenodo.20441643)
+[![Shiny app](https://img.shields.io/badge/demo-shinyapps.io-blue)](https://gendoc.shinyapps.io/VisualOGM/)
 
 Aplicación **Shiny** para visualizar resultados de **Bionano™**: circle plots por muestra y oncoprints de varias muestras a partir de los archivos exportados por **Bionano Access™**.
 
 **Demo en línea:** [gendoc.shinyapps.io/VisualOGM](https://gendoc.shinyapps.io/VisualOGM/)
 
 Repositorio: [github.com/GenDoc94/VisualOGM](https://github.com/GenDoc94/VisualOGM)
+
+Última versión: [v1.0.0-beta.1](https://github.com/GenDoc94/VisualOGM/releases/tag/v1.0.0-beta.1) — ver [CHANGELOG.md](CHANGELOG.md).
 
 ## Funcionalidades
 
@@ -62,6 +65,7 @@ Los nombres de Classified_Variants y Aneuploidy de un mismo caso deben compartir
 - `app.R` — interfaz y servidor Shiny
 - `functions/` — lectura, validación y gráficos
 - `www/` — logo y capturas de la pestaña Información
+- `CHANGELOG.md` — historial de versiones
 
 ## Demo en línea
 

@@ -7,5 +7,6 @@ workflow_data.rds
 *.RData
 *.Rhistory
 .Rproj.user/
+rsconnect/
 *.bed
 !www/filter_example.bed
